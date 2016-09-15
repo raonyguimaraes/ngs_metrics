@@ -31,7 +31,8 @@ output_base = "%s/%s" % (output_folder, base_name)
 
 memory_use = "15g"
 gvcftools_path = "/home/ubuntu/projects/programs/gvcftools-0.16/bin"
-vcftools_path = "/home/ubuntu/projects/programs/vcftools/vcftools-0.1.14/src/"
+vcftools_path = "/home/ubuntu/projects/programs/vcftools/vcftools-0.1.14/src"
+bcftools_path = "/home/ubuntu/projects/programs/bcftools/bcftools-1.3.1/"
 #/home/ubuntu/projects/programs/vcftools/vcftools-0.1.14/src/cpp/
 #/home/ubuntu/projects/programs/vcftools/vcftools-0.1.14/src/perl/
 
@@ -39,15 +40,19 @@ vcftools_path = "/home/ubuntu/projects/programs/vcftools/vcftools-0.1.14/src/"
 #gzip -dc ../../input/WGC081270U.g.vcf.gz | ../../programs/gvcftools-0.16/bin/extract_variants | bgzip -c > WGC081270U.vcf.gz
 command = """gzip -dc %s | %s/extract_variants | bgzip -c > %s.vcf.gz
 """ % (vcf_file, gvcftools_path, output_base)
-# output = call(command, shell=True)
-# print(output)
+output = call(command, shell=True)
+print(output)
 
 #vcftools metrics
-command = """%s/perl/vcf-stats %s.vcf.gz > %s.vcf-stats.dump.txt
+command = """%s/perl/vcf-stats %s.vcf.gz > %s.vcftools.stats.dump.txt
 """ % (vcftools_path, output_base, output_base)
 output = call(command, shell=True)
 print(output)
 
 #*coverage
 #bcftools metrics
+command = "%s/bcftools stats %s.vcf.gz %s.bcftools.stats.txt" % (bcftools_path, output_base, output_base)
+output = call(command, shell=True)
+print(output)
+
 #snpeff
