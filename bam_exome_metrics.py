@@ -53,7 +53,7 @@ command = """/home/ubuntu/projects/programs/bamtools/bin/bamtools stats -in %s""
 print('Running DepthOfCoverage')
 #gatk DepthOfCoverage
 command = """
-java -Xmx15g -Djava.io.tmpdir=/projects/tmp -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
+java -Xmx15g -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
 -I %s \
 -R %s \
 -o %s/%s.DepthOfCoverage \
