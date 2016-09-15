@@ -31,15 +31,23 @@ output_base = "%s/%s" % (output_folder, base_name)
 
 memory_use = "15g"
 gvcftools_path = "/home/ubuntu/projects/programs/gvcftools-0.16/bin"
+vcftools_path = "/home/ubuntu/projects/programs/vcftools/vcftools-0.1.14/src/"
+#/home/ubuntu/projects/programs/vcftools/vcftools-0.1.14/src/cpp/
+#/home/ubuntu/projects/programs/vcftools/vcftools-0.1.14/src/perl/
 
 #extract vcf from gvcf
 #gzip -dc ../../input/WGC081270U.g.vcf.gz | ../../programs/gvcftools-0.16/bin/extract_variants | bgzip -c > WGC081270U.vcf.gz
 command = """gzip -dc %s | %s/extract_variants | bgzip -c > %s.vcf.gz
 """ % (vcf_file, gvcftools_path, output_base)
+# output = call(command, shell=True)
+# print(output)
+
+#vcftools metrics
+command = """%s/perl/vcf-stats %s.vcf.gz > %s.vcf-stats.dump.txt
+""" % (vcftools_path, output_base, output_base)
 output = call(command, shell=True)
 print(output)
 
-#vcftools metrics
 #*coverage
 #bcftools metrics
 #snpeff
