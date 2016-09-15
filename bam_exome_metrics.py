@@ -49,10 +49,14 @@ command = """/home/ubuntu/projects/programs/subread-1.5.1-Linux-x86_64/bin/featu
 -a /home/ubuntu/projects/input/gtf/Homo_sapiens.GRCh37.75.gtf \
 -o %s/%s \
 %s""" % (output_folder, base_name, bam_file)
+# output = call(command, shell=True)
+# print(output)
+
+#bamtools
+command = """/home/ubuntu/projects/programs/bamtools/bin/bamtools stats -in %s""" % (bam_file)
 output = call(command, shell=True)
 print(output)
 
-#bamtools
 #gatk
 #picard
 #qualimap
