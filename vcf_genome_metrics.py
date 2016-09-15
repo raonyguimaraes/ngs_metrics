@@ -23,14 +23,12 @@ if vcf_file.startswith('s3://'):
     output = call(command, shell=True)
     print(output)
 
-die()    
-
 base=os.path.basename(vcf_file)
 # base_name = os.path.splitext(base)[0]
 base_name = base.split('.')[0]
 print(base_name)
 
-
+die()    
 
 #create one folder per sample
 output_folder = "/home/ubuntu/projects/output/reports/vcf/%s" % (base_name)
