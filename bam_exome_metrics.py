@@ -131,17 +131,18 @@ O=%s/%s.insert_size_metrics.txt \
 H=%s/%s.insert_size_histogram.pdf \
 M=0.5 \
 VALIDATION_STRINGENCY=SILENT""" % (picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
-output = call(command, shell=True)
-print(output)
+# output = call(command, shell=True)
+# print(output)
 
 # #MeanQualityByCycle
-# command = """
-# java -jar %s/MeanQualityByCycle.jar \
-# I=%s \
-# O=%s.b37_1kg.MeanQualityByCycle \
-# CHART=%s.b37_1kg.MeanQualityByCycle.pdf \
-# VALIDATION_STRINGENCY=LENIENT """ % (pic_dir, input_file, filename, filename)
-# os.system(command)
+print('Running MeanQualityByCycle')
+command = """java -jar %s/picard.jar MeanQualityByCycle \
+I=%s \
+O=%s/%s.mean_qual_by_cycle.txt \
+CHART=%s/%s.mean_qual_by_cycle.pdf \
+VALIDATION_STRINGENCY=SILENT """ % (picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
+output = call(command, shell=True)
+print(output)
 
 # #QualityScoreDistribution
 # command = """
