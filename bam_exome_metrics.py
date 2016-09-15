@@ -23,6 +23,7 @@ base=os.path.basename(bam_file)
 base_name = os.path.splitext(base)[0]
 print(base_name)
 
+memory_use = "15g"
 
 human_reference = "/home/ubuntu/projects/input/b37/human_g1k_v37.fasta"
 human_reference = "/home/ubuntu/projects/input/grch37/d5/hs37d5.fa"
@@ -125,12 +126,12 @@ VALIDATION_STRINGENCY=SILENT""" % (picard_dir, bam_file, output_folder, base_nam
 
 print('Running CollectInsertSizeMetrics')
 #CollectInsertSizeMetrics
-command = """java -jar %s/picard.jar CollectInsertSizeMetrics \
+command = """java -Xmx%s -jar %s/picard.jar CollectInsertSizeMetrics \
 I=%s \
 O=%s/%s.insert_size_metrics.txt \
 H=%s/%s.insert_size_histogram.pdf \
 M=0.5 \
-VALIDATION_STRINGENCY=SILENT""" % (picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
+VALIDATION_STRINGENCY=SILENT""" % (memory_use, picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
 output = call(command, shell=True)
 print(output)
 
