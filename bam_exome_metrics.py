@@ -73,6 +73,20 @@ java -Xmx15g -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
 # output = call(command, shell=True)
 # print(output)
 
+
+#qualimap BamQC
+print('Running qualimap BamQC')
+command = """%s/qualimap bamqc \
+-bam %s \
+-outdir %s \
+-nt 4
+""" % (qualimap_dir, bam_file, output_folder)
+output = call(command, shell=True)
+print(output)
+ 
+#samtools flagstat
+
+
 #picard
 print('Running CollectAlignmentSummaryMetrics')
 # #CollectAlignmentSummaryMetrics
@@ -81,7 +95,7 @@ java -jar -Xmx15g %s/picard.jar CollectAlignmentSummaryMetrics \
 I=%s \
 O=%s/%s.AlignmentSummaryMetrics \
 R=%s \
-VALIDATION_STRINGENCY=SILENT """ % (picard_dir, bam_file, output_folder, base_name, human_reference)
+VALIDATION_STRINGENCY=SILENT""" % (picard_dir, bam_file, output_folder, base_name, human_reference)
 # output = call(command, shell=True)
 # print(output)
 
@@ -93,10 +107,10 @@ I=%s \
 O=%s/%s.gc_bias_metrics.txt \
 R=%s \
 CHART=%s/%s.gc_bias_metrics.pdf \
-S=%s/%s.gc_bias_summary_metrics.txt
-VALIDATION_STRINGENCY=LENIENT """ % (picard_dir, bam_file, output_folder, base_name, human_reference, output_folder, base_name, output_folder, base_name)
-output = call(command, shell=True)
-print(output)
+S=%s/%s.gc_bias_summary_metrics.txt \
+VALIDATION_STRINGENCY=SILENT """ % (picard_dir, bam_file, output_folder, base_name, human_reference, output_folder, base_name, output_folder, base_name)
+# output = call(command, shell=True)
+# print(output)
 
 # #CollectInsertSizeMetrics
 # command = """
@@ -141,9 +155,5 @@ print(output)
 # TARGET_INTERVALS=%s \
 # VALIDATION_STRINGENCY=LENIENT """ % (pic_dir, input_file, filename, exon, exon)
 # #os.system(command)
-
-#qualimap BamQC
-
-#samtools flagstat
 
 
