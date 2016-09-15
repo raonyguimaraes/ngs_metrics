@@ -25,8 +25,8 @@ print(base_name)
 
 memory_use = "15g"
 
-human_reference = "/home/ubuntu/projects/input/b37/human_g1k_v37.fasta"
-human_reference = "/home/ubuntu/projects/input/grch37/d5/hs37d5.fa"
+human_reference = "/home/ubuntu/projects/input/b37/human_g1k_v37.fasta" #84 features
+human_reference = "/home/ubuntu/projects/input/grch37/d5/hs37d5.fa" #86 features
 
 #create one folder per sample
 output_folder = "/home/ubuntu/projects/output/reports/bam/%s" % (base_name)
@@ -57,13 +57,13 @@ command = """/home/ubuntu/projects/programs/subread-1.5.1-Linux-x86_64/bin/featu
 -a /home/ubuntu/projects/input/gtf/Homo_sapiens.GRCh37.75.gtf \
 -o %s/%s.featureCounts.txt \
 %s""" % (output_folder, base_name, bam_file)
-# output = call(command, shell=True)
-# print(output)
+output = call(command, shell=True)
+print(output)
 
 #bamtools
 command = """/home/ubuntu/projects/programs/bamtools/bin/bamtools stats -in %s > %s/%s.bamtools.stats.txt""" % (bam_file, output_folder, base_name)
-# output = call(command, shell=True)
-# print(output)
+output = call(command, shell=True)
+print(output)
 
 print('Running DepthOfCoverage')
 #gatk DepthOfCoverage
@@ -76,8 +76,8 @@ java -Xmx15g -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
 -ct 15 -ct 50 -ct 100 -ct 150 -ct 200 \
 -log %s/%s.DepthofCoverage.log \
 """ % (gatk_dir, bam_file, human_reference, output_folder, base_name, target_file, output_folder, base_name)
-# output = call(command, shell=True)
-# print(output)
+output = call(command, shell=True)
+print(output)
 
 
 #qualimap BamQC
@@ -89,15 +89,15 @@ command = """%s/qualimap bamqc \
 -outdir %s \
 -nt 4
 """ % (qualimap_dir, bam_file, target_file, output_folder)
-# output = call(command, shell=True)
-# print(output)
+output = call(command, shell=True)
+print(output)
  
 #samtools flagstat
 print('Running samtools flagstat')
 command = """%s/samtools flagstat %s > %s/%s.samtools.flagstat.txt
 """ % (samtools_dir, bam_file, output_folder, base_name)
-# output = call(command, shell=True)
-# print(output)
+output = call(command, shell=True)
+print(output)
 
 #picard
 print('Running CollectAlignmentSummaryMetrics')
@@ -108,8 +108,8 @@ I=%s \
 O=%s/%s.AlignmentSummaryMetrics.txt \
 R=%s \
 VALIDATION_STRINGENCY=SILENT""" % (picard_dir, bam_file, output_folder, base_name, human_reference)
-# output = call(command, shell=True)
-# print(output)
+output = call(command, shell=True)
+print(output)
 
 print('Running CollectGcBiasMetrics')
 # #CollectGcBiasMetrics
@@ -121,8 +121,8 @@ R=%s \
 CHART=%s/%s.gc_bias_metrics.pdf \
 S=%s/%s.gc_bias_summary_metrics.txt \
 VALIDATION_STRINGENCY=SILENT""" % (picard_dir, bam_file, output_folder, base_name, human_reference, output_folder, base_name, output_folder, base_name)
-# output = call(command, shell=True)
-# print(output)
+output = call(command, shell=True)
+print(output)
 
 print('Running CollectInsertSizeMetrics')
 #CollectInsertSizeMetrics
@@ -137,39 +137,43 @@ print(output)
 
 # #MeanQualityByCycle
 print('Running MeanQualityByCycle')
-command = """java -jar %s/picard.jar MeanQualityByCycle \
+command = """java -Xmx%s -jar %s/picard.jar MeanQualityByCycle \
 I=%s \
 O=%s/%s.mean_qual_by_cycle.txt \
 CHART=%s/%s.mean_qual_by_cycle.pdf \
-VALIDATION_STRINGENCY=SILENT """ % (picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
-# output = call(command, shell=True)
-# print(output)
+VALIDATION_STRINGENCY=SILENT """ % (memory_use, picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
+output = call(command, shell=True)
+print(output)
 
 print('Running QualityScoreDistribution')
 # #QualityScoreDistribution
-command = """java -jar %s/picard.jar QualityScoreDistribution \
+command = """java -Xmx%s -jar %s/picard.jar QualityScoreDistribution \
 I=%s \
 O=%s/%s.qual_score_dist.txt \
 CHART=%s/%s.qual_score_dist.pdf \
-VALIDATION_STRINGENCY=SILENT """ % (picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
-# output = call(command, shell=True)
-# print(output)
+VALIDATION_STRINGENCY=SILENT """ % (memory_use, picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
+output = call(command, shell=True)
+print(output)
 
+print('Running BamIndexStats')
 # #BamIndexStats
-# command = """
-# java -jar %s/BamIndexStats.jar \
-# INPUT=%s \
-# VALIDATION_STRINGENCY=LENIENT """ % (pic_dir, input_file)
-# os.system(command)
+command = """java -Xmx%s -jar %s/picard.jar BamIndexStats \
+I=%s \
+O=%s/%s.BamIndexStats.output.txt \
+VALIDATION_STRINGENCY=SILENT""" % (memory_use, picard_dir, bam_file, output_folder, base_name)
+output = call(command, shell=True)
+print(output)
 
-# #CalculateHsMetrics WholeGenome or CalculateHsMetrics ????
-# command = """
-# java -jar -Xmx4g %s/CalculateHsMetrics.jar \
-# INPUT=%s \
-# OUTPUT=%s.b37_1kg.HsMetrics \
-# BAIT_INTERVALS=%s \
-# TARGET_INTERVALS=%s \
-# VALIDATION_STRINGENCY=LENIENT """ % (pic_dir, input_file, filename, exon, exon)
-# #os.system(command)
+print('Running CollectHsMetrics')
+#CollectHsMetrics
+command = """java -Xmx%s -jar %s/picard.jar CollectHsMetrics \
+I=%s \
+O=%s/%s.hs_metrics.txt \
+R=%s \
+BAIT_INTERVALS=%s \
+TARGET_INTERVALS=%s \
+VALIDATION_STRINGENCY=SILENT """ % (memory_use, picard_dir, bam_file, output_folder, base_name, human_reference, target_file, target_file)
+output = call(command, shell=True)
+print(output)
 
 
