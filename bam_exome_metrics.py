@@ -81,7 +81,7 @@ java -jar -Xmx15g %s/picard.jar CollectAlignmentSummaryMetrics \
 I=%s \
 O=%s/%s.AlignmentSummaryMetrics \
 R=%s \
-VALIDATION_STRINGENCY=LENIENT """ % (picard_dir, bam_file, output_folder, base_name, human_reference)
+VALIDATION_STRINGENCY=SILENT """ % (picard_dir, bam_file, output_folder, base_name, human_reference)
 output = call(command, shell=True)
 print(output)
 
