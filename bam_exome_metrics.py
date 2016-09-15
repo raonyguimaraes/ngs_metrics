@@ -27,7 +27,11 @@ print(base_name)
 human_reference = "/home/ubuntu/projects/input/b37/human_g1k_v37.fasta"
 human_reference = "/home/ubuntu/projects/input/grch37/d5/hs37d5.fa"
 
-output_folder = "/home/ubuntu/projects/output/reports/bam"
+#create one folder per sample
+output_folder = "/home/ubuntu/projects/output/reports/bam/%s" % (base_name)
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
 samtools_dir = "/home/ubuntu/projects/programs/samtools-1.3.1"
 picard_dir = "/home/ubuntu/projects/programs/picard"
 gatk_dir = "/home/ubuntu/projects/programs/gatk"
@@ -50,13 +54,13 @@ print('Running featureCounts')
 #featureCounts
 command = """/home/ubuntu/projects/programs/subread-1.5.1-Linux-x86_64/bin/featureCounts -T 4 -p \
 -a /home/ubuntu/projects/input/gtf/Homo_sapiens.GRCh37.75.gtf \
--o %s/%s.featureCounts \
+-o %s/%s.featureCounts.txt \
 %s""" % (output_folder, base_name, bam_file)
 # output = call(command, shell=True)
 # print(output)
 
 #bamtools
-command = """/home/ubuntu/projects/programs/bamtools/bin/bamtools stats -in %s > %s/%s.bamtools.stats""" % (bam_file, output_folder, base_name)
+command = """/home/ubuntu/projects/programs/bamtools/bin/bamtools stats -in %s > %s/%s.bamtools.stats.txt""" % (bam_file, output_folder, base_name)
 # output = call(command, shell=True)
 # print(output)
 
@@ -66,8 +70,9 @@ command = """
 java -Xmx15g -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
 -I %s \
 -R %s \
--o %s/%s.DepthOfCoverage \
+-o %s/%s.DepthOfCoverage.txt \
 -L %s \
+-ct 15 -ct 50 -ct 100 -ct 150 -ct 200 \
 -log %s/%s.DepthofCoverage.log \
 """ % (gatk_dir, bam_file, human_reference, output_folder, base_name, target_file, output_folder, base_name)
 # output = call(command, shell=True)
@@ -82,11 +87,15 @@ command = """%s/qualimap bamqc \
 -outdir %s \
 -nt 4
 """ % (qualimap_dir, bam_file, output_folder)
-output = call(command, shell=True)
-print(output)
+# output = call(command, shell=True)
+# print(output)
  
 #samtools flagstat
-
+print('Running samtools flagstat')
+command = """%s/samtools flagstat %s > %s/%s.samtools.flagstat.txt
+""" % (samtools_dir, bam_file, output_folder, base_name)
+output = call(command, shell=True)
+print(output)
 
 #picard
 print('Running CollectAlignmentSummaryMetrics')
@@ -94,7 +103,7 @@ print('Running CollectAlignmentSummaryMetrics')
 command = """
 java -jar -Xmx15g %s/picard.jar CollectAlignmentSummaryMetrics \
 I=%s \
-O=%s/%s.AlignmentSummaryMetrics \
+O=%s/%s.AlignmentSummaryMetrics.txt \
 R=%s \
 VALIDATION_STRINGENCY=SILENT""" % (picard_dir, bam_file, output_folder, base_name, human_reference)
 # output = call(command, shell=True)
