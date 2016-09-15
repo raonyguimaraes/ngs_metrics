@@ -37,22 +37,32 @@ bcftools_path = "/home/ubuntu/projects/programs/bcftools/bcftools-1.3.1/"
 #/home/ubuntu/projects/programs/vcftools/vcftools-0.1.14/src/perl/
 
 #extract vcf from gvcf
+print('extract vcf from gvcf')
 #gzip -dc ../../input/WGC081270U.g.vcf.gz | ../../programs/gvcftools-0.16/bin/extract_variants | bgzip -c > WGC081270U.vcf.gz
 command = """gzip -dc %s | %s/extract_variants | bgzip -c > %s.vcf.gz
 """ % (vcf_file, gvcftools_path, output_base)
 output = call(command, shell=True)
 print(output)
 
+#index with tabix
+command = """tabix -p vcf %s.vcf.gz""" % (output_base)
+output = call(command, shell=True)
+print(output)
+
+
+print('vcftools stats')
 #vcftools metrics
-command = """%s/perl/vcf-stats %s.vcf.gz > %s.vcftools.stats.dump.txt
+command = """%s/perl/vcf-stats %s.vcf.gz > %s.vcftools.stats.txt
 """ % (vcftools_path, output_base, output_base)
 output = call(command, shell=True)
 print(output)
 
 #*coverage
 #bcftools metrics
+print('bcftools stats')
 command = "%s/bcftools stats %s.vcf.gz %s.bcftools.stats.txt" % (bcftools_path, output_base, output_base)
 output = call(command, shell=True)
 print(output)
 
 #snpeff
+
