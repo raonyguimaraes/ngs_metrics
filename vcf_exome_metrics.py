@@ -32,7 +32,8 @@ output_base = "%s/%s" % (output_folder, base_name)
 memory_use = "15g"
 gvcftools_path = "/home/ubuntu/projects/programs/gvcftools-0.16/bin"
 vcftools_path = "/home/ubuntu/projects/programs/vcftools/vcftools-0.1.14/src"
-bcftools_path = "/home/ubuntu/projects/programs/bcftools/bcftools-1.3.1/"
+bcftools_path = "/home/ubuntu/projects/programs/bcftools/bcftools-1.3.1"
+snpeff_path = "/home/ubuntu/projects/programs/snpeff/snpEff"
 #/home/ubuntu/projects/programs/vcftools/vcftools-0.1.14/src/cpp/
 #/home/ubuntu/projects/programs/vcftools/vcftools-0.1.14/src/perl/
 
@@ -46,22 +47,34 @@ command = """gzip -dc %s | %s/extract_variants | bgzip -c > %s.vcf.gz
 
 #index with tabix
 command = """tabix -p vcf %s.vcf.gz""" % (output_base)
-output = call(command, shell=True)
-print(output)
+# output = call(command, shell=True)
+# print(output)
 
 print('vcftools stats')
 #vcftools metrics
 command = """%s/perl/vcf-stats %s.vcf.gz > %s.vcftools.stats.txt
 """ % (vcftools_path, output_base, output_base)
-output = call(command, shell=True)
-print(output)
+# output = call(command, shell=True)
+# print(output)
 
 #*coverage
 #bcftools metrics
 print('bcftools stats')
-command = "%s/bcftools stats %s.vcf.gz %s.bcftools.stats.txt" % (bcftools_path, output_base, output_base)
-output = call(command, shell=True)
-print(output)
+command = "%s/bcftools stats %s.vcf.gz > %s.bcftools.stats.txt" % (bcftools_path, output_base, output_base)
+# output = call(command, shell=True)
+# print(output)
 
 #snpeff
+#extract vcf
+command = "bgzip -d -c %s.vcf.gz > %s.vcf" % (output_base, output_base)
+# output = call(command, shell=True)
+# print(output)
+
+command = "java -Xmx5g -jar %s/snpEff.jar eff -stats %s.snpeff.full.html -i vcf GRCh37.75 %s.vcf > %s.snpeff.output.vcf" % (snpeff_path, output_base, output_base, output_base)
+# output = call(command, shell=True)
+# print(output)
+
+#filtering VCF
+
+
 
