@@ -34,7 +34,7 @@ gvcftools_path = "/home/ubuntu/projects/programs/gvcftools-0.16/bin"
 
 #extract vcf from gvcf
 #gzip -dc ../../input/WGC081270U.g.vcf.gz | ../../programs/gvcftools-0.16/bin/extract_variants | bgzip -c > WGC081270U.vcf.gz
-command = """gzip -dc %s | %s/extract_variants | bgzip -c > %s/%s.gz
+command = """gzip -dc %s | %s/extract_variants | bgzip -c > %s.gz
 """ % (vcf_file, gvcftools_path, output_base)
 output = call(command, shell=True)
 print(output)
