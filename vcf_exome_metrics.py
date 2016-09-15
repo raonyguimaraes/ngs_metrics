@@ -7,7 +7,7 @@ import os
 import argparse
 parser = argparse.ArgumentParser()
 
-parser.add_argument("-i", "--input", help="VCF file (can be the location on S3)")
+parser.add_argument("-i", "--input", help="GVCF.GZ file (can be the location on S3)")
 parser.add_argument("-t", "--target", help="Target File")
 
 args = parser.parse_args()
@@ -18,7 +18,8 @@ print(vcf_file, target_file)
 
 
 base=os.path.basename(vcf_file)
-base_name = os.path.splitext(base)[0]
+# base_name = os.path.splitext(base)[0]
+base_name = base.split('.')[0]
 print(base_name)
 
 #create one folder per sample
@@ -31,10 +32,9 @@ output_base = "%s/%s" % (output_folder, base_name)
 memory_use = "15g"
 gvcftools_path = "/home/ubuntu/projects/programs/gvcftools-0.16/bin"
 
-
 #extract vcf from gvcf
 #gzip -dc ../../input/WGC081270U.g.vcf.gz | ../../programs/gvcftools-0.16/bin/extract_variants | bgzip -c > WGC081270U.vcf.gz
-command = """gzip -dc %s | %s/extract_variants | bgzip -c > %s.gz
+command = """gzip -dc %s | %s/extract_variants | bgzip -c > %s.vcf.gz
 """ % (vcf_file, gvcftools_path, output_base)
 output = call(command, shell=True)
 print(output)

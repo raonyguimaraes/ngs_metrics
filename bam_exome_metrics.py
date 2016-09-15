@@ -61,6 +61,7 @@ output = call(command, shell=True)
 print(output)
 
 #bamtools
+print('Running bamtools')
 command = """/home/ubuntu/projects/programs/bamtools/bin/bamtools stats -in %s > %s/%s.bamtools.stats.txt""" % (bam_file, output_folder, base_name)
 output = call(command, shell=True)
 print(output)
@@ -85,10 +86,9 @@ print('Running qualimap BamQC')
 command = """%s/qualimap bamqc \
 --java-mem-size=15G \
 -bam %s \
---feature-file %s \
 -outdir %s \
 -nt 4
-""" % (qualimap_dir, bam_file, target_file, output_folder)
+""" % (qualimap_dir, bam_file, output_folder)
 output = call(command, shell=True)
 print(output)
  

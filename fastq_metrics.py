@@ -9,4 +9,4 @@ print(args.echo)
 
 #fastqc
 #fastq screener
-
+#cutadapt
