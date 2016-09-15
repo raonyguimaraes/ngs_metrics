@@ -84,9 +84,10 @@ print('Running qualimap BamQC')
 command = """%s/qualimap bamqc \
 --java-mem-size=15G \
 -bam %s \
+--feature-file %s \
 -outdir %s \
 -nt 4
-""" % (qualimap_dir, bam_file, output_folder)
+""" % (qualimap_dir, bam_file, target_file, output_folder)
 # output = call(command, shell=True)
 # print(output)
  
@@ -94,8 +95,8 @@ command = """%s/qualimap bamqc \
 print('Running samtools flagstat')
 command = """%s/samtools flagstat %s > %s/%s.samtools.flagstat.txt
 """ % (samtools_dir, bam_file, output_folder, base_name)
-output = call(command, shell=True)
-print(output)
+# output = call(command, shell=True)
+# print(output)
 
 #picard
 print('Running CollectAlignmentSummaryMetrics')
@@ -118,18 +119,20 @@ O=%s/%s.gc_bias_metrics.txt \
 R=%s \
 CHART=%s/%s.gc_bias_metrics.pdf \
 S=%s/%s.gc_bias_summary_metrics.txt \
-VALIDATION_STRINGENCY=SILENT """ % (picard_dir, bam_file, output_folder, base_name, human_reference, output_folder, base_name, output_folder, base_name)
+VALIDATION_STRINGENCY=SILENT""" % (picard_dir, bam_file, output_folder, base_name, human_reference, output_folder, base_name, output_folder, base_name)
 # output = call(command, shell=True)
 # print(output)
 
-# #CollectInsertSizeMetrics
-# command = """
-# java -jar %s/CollectInsertSizeMetrics.jar \
-# I=%s \
-# O=%s.b37_1kg.CollectInsertSizeMetrics \
-# H=%s.b37_1kg.CollectInsertSizeMetrics.pdf \
-# VALIDATION_STRINGENCY=LENIENT """ % (pic_dir, input_file, filename, filename)
-# os.system(command)
+print('Running CollectInsertSizeMetrics')
+#CollectInsertSizeMetrics
+command = """java -jar %s/picard.jar CollectInsertSizeMetrics \
+I=%s \
+O=%s/%s.insert_size_metrics.txt \
+H=%s/%s.insert_size_histogram.pdf \
+M=0.5
+VALIDATION_STRINGENCY=SILENT""" % (picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
+output = call(command, shell=True)
+print(output)
 
 # #MeanQualityByCycle
 # command = """
