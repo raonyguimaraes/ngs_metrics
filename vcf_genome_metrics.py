@@ -17,13 +17,15 @@ print(vcf_file)
 
 input_folder = "/home/ubuntu/projects/input/vcf"
 
+base=os.path.basename(vcf_file)
+
 if vcf_file.startswith('s3://'):
     #download file to input folder
     command = "s3cmd get %s %s/" % (vcf_file, input_folder)
     output = call(command, shell=True)
     print(output)
+    vcf_file = "%s/%s" % (input_folder, base)
 
-base=os.path.basename(vcf_file)
 # base_name = os.path.splitext(base)[0]
 base_name = base.split('.')[0]
 print(base_name)

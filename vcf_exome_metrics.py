@@ -92,6 +92,7 @@ command = "%s/bcftools filter -T %s -i'QUAL>100 && FMT/DP>100' %s.vcf > %s.filte
 output = call(command, shell=True)
 print(output)
 
+print('snpeff')
 command = "java -Xmx5g -jar %s/snpEff.jar eff -stats %s.snpeff.exons.html -i vcf GRCh37.75 %s.filtered.exons.vcf > %s.snpeff.exons.vcf" % (snpeff_path, output_base, output_base, output_base)
 output = call(command, shell=True)
 print(output)
