@@ -76,7 +76,7 @@ java -Xmx15g -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
 print('Running CollectAlignmentSummaryMetrics')
 # #CollectAlignmentSummaryMetrics
 command = """
-java -jar -Xmx15g %s/CollectAlignmentSummaryMetrics.jar \
+java -jar -Xmx15g %s/picard.jar CollectAlignmentSummaryMetrics \
 I=%s \
 O=%s/%s.AlignmentSummaryMetrics \
 R=%s \
