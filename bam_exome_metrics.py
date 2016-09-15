@@ -28,11 +28,16 @@ human_reference = "/home/ubuntu/projects/input/b37/human_g1k_v37.fasta"
 
 output_folder = "/home/ubuntu/projects/output/reports/bam"
 samtools_dir = "/home/ubuntu/projects/programs/samtools-1.3.1"
-
 gatk_dir = "/home/ubuntu/projects/programs/gatk"
 
 #s3
 #if bam file start with s3 download from s3
+
+
+#index bam
+command = "%s/samtools index %s" % (bam_file)
+output = call(command, shell=True)
+print(output)
 
 #fastqc
 #done already!
