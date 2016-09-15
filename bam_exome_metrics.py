@@ -55,7 +55,7 @@ command = """/home/ubuntu/projects/programs/subread-1.5.1-Linux-x86_64/bin/featu
 # print(output)
 
 #bamtools
-command = """/home/ubuntu/projects/programs/bamtools/bin/bamtools stats -in %s""" % (bam_file)
+command = """/home/ubuntu/projects/programs/bamtools/bin/bamtools stats -in %s > %s/%s.bamtools.stats""" % (bam_file, output_folder, base_name)
 # output = call(command, shell=True)
 # print(output)
 
@@ -69,8 +69,8 @@ java -Xmx15g -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
 -L %s \
 -log %s/%s.DepthofCoverage.log \
 """ % (gatk_dir, bam_file, human_reference, output_folder, base_name, target_file, output_folder, base_name)
-output = call(command, shell=True)
-print(output)
+# output = call(command, shell=True)
+# print(output)
 
 #picard
 print('Running CollectAlignmentSummaryMetrics')
@@ -78,10 +78,11 @@ print('Running CollectAlignmentSummaryMetrics')
 command = """
 java -jar -Xmx15g %s/CollectAlignmentSummaryMetrics.jar \
 I=%s \
-O=%s.AlignmentSummaryMetrics \
+O=%s/%s.AlignmentSummaryMetrics \
 R=%s \
-VALIDATION_STRINGENCY=LENIENT """ % (picard_dir, bam_file, base_name, human_reference)
-
+VALIDATION_STRINGENCY=LENIENT """ % (picard_dir, bam_file, output_folder, base_name, human_reference)
+output = call(command, shell=True)
+print(output)
 
 # #CollectGcBiasMetrics
 # command = """
