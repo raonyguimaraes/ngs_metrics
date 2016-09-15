@@ -129,7 +129,7 @@ command = """java -jar %s/picard.jar CollectInsertSizeMetrics \
 I=%s \
 O=%s/%s.insert_size_metrics.txt \
 H=%s/%s.insert_size_histogram.pdf \
-M=0.5
+M=0.5 \
 VALIDATION_STRINGENCY=SILENT""" % (picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
 output = call(command, shell=True)
 print(output)
