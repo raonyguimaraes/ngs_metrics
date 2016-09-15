@@ -80,20 +80,17 @@ print(output)
 # print(output)
 
 print('snpeff')
-command = "java -Xmx5g -jar %s/snpEff.jar eff -stats %s.snpeff.full.html -i vcf GRCh37.75 %s.vcf | bgzip -c > %s.snpeff.full.vcf.gz" % (snpeff_path, output_base, output_base, output_base)
+command = "java -Xmx5g -jar %s/snpEff.jar eff -stats %s.snpeff.full.html -csvStats %s.snpEff.summary.csv -i vcf GRCh37.75 %s.vcf | bgzip -c > %s.snpeff.full.vcf.gz" % (snpeff_path, output_base, output_base, output_base, output_base)
 output = call(command, shell=True)
 print(output)
 
-# print('filtering')
-# #filtering VCF
-# command = "%s/bcftools filter -T %s %s.vcf > %s.filtered.exons.vcf" % (bcftools_path, target_file, output_base, output_base)
-# output = call(command, shell=True)
-# print(output)
+#check depth and coverage to filter this one!
 
-# #filtered.exons.q50.dp50.vcf
-# command = "%s/bcftools filter -T %s -i'QUAL>50 && FMT/DP>50' %s.vcf > %s.filtered.exons.q50.dp50.vcf" % (bcftools_path, target_file, output_base, output_base)
-# output = call(command, shell=True)
-# print(output)
+print('filtering')
+# #filtered.exons.q50.dp10.vcf
+command = "%s/bcftools filter -i'QUAL>50 && FMT/DP>10' %s.vcf.gz | bgzip -c > %s.filtered.q50.dp10.vcf.gz" % (bcftools_path, output_base, output_base)
+output = call(command, shell=True)
+print(output)
 
 # #WGC081270U.filtered.exons.q100.dp100.vcf
 # command = "%s/bcftools filter -T %s -i'QUAL>100 && FMT/DP>100' %s.vcf > %s.filtered.exons.q100.dp100.vcf" % (bcftools_path, target_file, output_base, output_base)
