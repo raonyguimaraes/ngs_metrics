@@ -35,7 +35,7 @@ gatk_dir = "/home/ubuntu/projects/programs/gatk"
 
 
 #index bam
-command = "%s/samtools index %s" % (bam_file)
+command = "%s/samtools index %s" % (samtools_dir, bam_file)
 output = call(command, shell=True)
 print(output)
 
