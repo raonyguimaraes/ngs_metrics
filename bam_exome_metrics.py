@@ -50,6 +50,7 @@ command = """/home/ubuntu/projects/programs/bamtools/bin/bamtools stats -in %s""
 # output = call(command, shell=True)
 # print(output)
 
+print('Running DepthOfCoverage')
 #gatk DepthOfCoverage
 command = """
 java -Xmx15g -Djava.io.tmpdir=/projects/tmp -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
@@ -64,71 +65,71 @@ print(output)
 
 #picard
       
-#CollectAlignmentSummaryMetrics
-command = """
-java -jar -Xmx40g %s/CollectAlignmentSummaryMetrics.jar \
-I=%s \
-O=%s.AlignmentSummaryMetrics \
-R=%s \
-VALIDATION_STRINGENCY=LENIENT """ % (pic_dir, input_file, filename, reference)
-os.system(command)
+# #CollectAlignmentSummaryMetrics
+# command = """
+# java -jar -Xmx40g %s/CollectAlignmentSummaryMetrics.jar \
+# I=%s \
+# O=%s.AlignmentSummaryMetrics \
+# R=%s \
+# VALIDATION_STRINGENCY=LENIENT """ % (pic_dir, input_file, filename, reference)
+# os.system(command)
 
-#CollectGcBiasMetrics
-command = """
-java -jar %s/CollectGcBiasMetrics.jar \
-R=%s \
-I=%s \
-O=%s.b37_1kg.GcBiasMetrics \
-CHART=%s.b37_1kg.GcBiasMetrics.pdf \
-VALIDATION_STRINGENCY=LENIENT """ % (pic_dir, reference, input_file, filename, filename)
-os.system(command)
+# #CollectGcBiasMetrics
+# command = """
+# java -jar %s/CollectGcBiasMetrics.jar \
+# R=%s \
+# I=%s \
+# O=%s.b37_1kg.GcBiasMetrics \
+# CHART=%s.b37_1kg.GcBiasMetrics.pdf \
+# VALIDATION_STRINGENCY=LENIENT """ % (pic_dir, reference, input_file, filename, filename)
+# os.system(command)
 
-#CollectInsertSizeMetrics
-command = """
-java -jar %s/CollectInsertSizeMetrics.jar \
-I=%s \
-O=%s.b37_1kg.CollectInsertSizeMetrics \
-H=%s.b37_1kg.CollectInsertSizeMetrics.pdf \
-VALIDATION_STRINGENCY=LENIENT """ % (pic_dir, input_file, filename, filename)
-os.system(command)
+# #CollectInsertSizeMetrics
+# command = """
+# java -jar %s/CollectInsertSizeMetrics.jar \
+# I=%s \
+# O=%s.b37_1kg.CollectInsertSizeMetrics \
+# H=%s.b37_1kg.CollectInsertSizeMetrics.pdf \
+# VALIDATION_STRINGENCY=LENIENT """ % (pic_dir, input_file, filename, filename)
+# os.system(command)
 
-#MeanQualityByCycle
-command = """
-java -jar %s/MeanQualityByCycle.jar \
-I=%s \
-O=%s.b37_1kg.MeanQualityByCycle \
-CHART=%s.b37_1kg.MeanQualityByCycle.pdf \
-VALIDATION_STRINGENCY=LENIENT """ % (pic_dir, input_file, filename, filename)
-os.system(command)
+# #MeanQualityByCycle
+# command = """
+# java -jar %s/MeanQualityByCycle.jar \
+# I=%s \
+# O=%s.b37_1kg.MeanQualityByCycle \
+# CHART=%s.b37_1kg.MeanQualityByCycle.pdf \
+# VALIDATION_STRINGENCY=LENIENT """ % (pic_dir, input_file, filename, filename)
+# os.system(command)
 
-#QualityScoreDistribution
-command = """
-java -jar %s/QualityScoreDistribution.jar \
-I=%s \
-O=%s.b37_1kg.QualityScoreDistribution \
-CHART=%s.b37_1kg.QualityScoreDistribution.pdf \
-VALIDATION_STRINGENCY=LENIENT """ % (pic_dir, input_file, filename, filename)
-os.system(command)
+# #QualityScoreDistribution
+# command = """
+# java -jar %s/QualityScoreDistribution.jar \
+# I=%s \
+# O=%s.b37_1kg.QualityScoreDistribution \
+# CHART=%s.b37_1kg.QualityScoreDistribution.pdf \
+# VALIDATION_STRINGENCY=LENIENT """ % (pic_dir, input_file, filename, filename)
+# os.system(command)
 
-#BamIndexStats
-command = """
-java -jar %s/BamIndexStats.jar \
-INPUT=%s \
-VALIDATION_STRINGENCY=LENIENT """ % (pic_dir, input_file)
-os.system(command)
-
-
+# #BamIndexStats
+# command = """
+# java -jar %s/BamIndexStats.jar \
+# INPUT=%s \
+# VALIDATION_STRINGENCY=LENIENT """ % (pic_dir, input_file)
+# os.system(command)
 
 
-#CalculateHsMetrics WholeGenome or CalculateHsMetrics ????
-command = """
-java -jar -Xmx4g %s/CalculateHsMetrics.jar \
-INPUT=%s \
-OUTPUT=%s.b37_1kg.HsMetrics \
-BAIT_INTERVALS=%s \
-TARGET_INTERVALS=%s \
-VALIDATION_STRINGENCY=LENIENT """ % (pic_dir, input_file, filename, exon, exon)
-#os.system(command)
+
+
+# #CalculateHsMetrics WholeGenome or CalculateHsMetrics ????
+# command = """
+# java -jar -Xmx4g %s/CalculateHsMetrics.jar \
+# INPUT=%s \
+# OUTPUT=%s.b37_1kg.HsMetrics \
+# BAIT_INTERVALS=%s \
+# TARGET_INTERVALS=%s \
+# VALIDATION_STRINGENCY=LENIENT """ % (pic_dir, input_file, filename, exon, exon)
+# #os.system(command)
 
 
 #qualimap
