@@ -33,7 +33,7 @@ gatk_dir = "/home/ubuntu/projects/programs/gatk"
 #s3
 #if bam file start with s3 download from s3
 
-
+print('Indexing BAM')
 #index bam
 command = "%s/samtools index %s" % (samtools_dir, bam_file)
 output = call(command, shell=True)
@@ -42,6 +42,7 @@ print(output)
 #fastqc
 #done already!
 
+print('Running featureCounts')
 #featureCounts
 command = """/home/ubuntu/projects/programs/subread-1.5.1-Linux-x86_64/bin/featureCounts -T 4 -p \
 -a /home/ubuntu/projects/input/gtf/Homo_sapiens.GRCh37.75.gtf \
@@ -64,6 +65,7 @@ java -Xmx15g -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
 -o %s/%s.DepthOfCoverage \
 -L %s \
 -log %s/%s.DepthofCoverage.log \
+-nt 4
 """ % (gatk_dir, bam_file, human_reference, output_folder, base_name, target_file, output_folder, base_name)
 output = call(command, shell=True)
 print(output)
