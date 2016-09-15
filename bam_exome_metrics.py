@@ -45,7 +45,7 @@ output_folder = "/home/ubuntu/projects/output/reports/bam"
 
   # input_file1 [input_file2] ...   A list of SAM or BAM format files.
 
-command = """/home/ubuntu/projects/programs/subread-1.5.1-Linux-x86_64/bin/featureCounts -T 4 \
+command = """/home/ubuntu/projects/programs/subread-1.5.1-Linux-x86_64/bin/featureCounts -T 4 -p \
 -a /home/ubuntu/projects/input/gtf/Homo_sapiens.GRCh37.75.gtf \
 -o %s/%s \
 %s""" % (output_folder, base_name, bam_file)
