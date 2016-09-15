@@ -77,6 +77,7 @@ java -Xmx15g -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
 #qualimap BamQC
 print('Running qualimap BamQC')
 command = """%s/qualimap bamqc \
+--java-mem-size=15G \
 -bam %s \
 -outdir %s \
 -nt 4
