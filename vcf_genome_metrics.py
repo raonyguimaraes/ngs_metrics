@@ -15,11 +15,22 @@ vcf_file = args.input
 
 print(vcf_file)
 
+input_folder = "/home/ubuntu/projects/input/vcf"
+
+if vcf_file.startswith('s3://'):
+    #download file to input folder
+    command = "s3cmd get %s %s/" % (vcf_file, input_folder)
+    output = call(command, shell=True)
+    print(output)
+
+die()    
 
 base=os.path.basename(vcf_file)
 # base_name = os.path.splitext(base)[0]
 base_name = base.split('.')[0]
 print(base_name)
+
+
 
 #create one folder per sample
 output_folder = "/home/ubuntu/projects/output/reports/vcf/%s" % (base_name)
