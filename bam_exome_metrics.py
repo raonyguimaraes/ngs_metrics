@@ -28,16 +28,19 @@ human_reference = "/home/ubuntu/projects/input/b37/human_g1k_v37.fasta"
 
 output_folder = "/home/ubuntu/projects/output/reports/bam"
 samtools_dir = "/home/ubuntu/projects/programs/samtools-1.3.1"
+picard_dir = "/home/ubuntu/projects/programs/picard"
 gatk_dir = "/home/ubuntu/projects/programs/gatk"
+qualimap_dir = "/home/ubuntu/projects/programs/qualimap/qualimap_v2.2"
 
 #s3
 #if bam file start with s3 download from s3
 
-print('Indexing BAM')
-#index bam
-command = "%s/samtools index %s" % (samtools_dir, bam_file)
-output = call(command, shell=True)
-print(output)
+if not os.path.exists(bam_file+'.bai'):
+    print('Indexing BAM')
+    #index bam
+    command = "%s/samtools index %s" % (samtools_dir, bam_file)
+    output = call(command, shell=True)
+    print(output)
 
 #fastqc
 #done already!
@@ -65,21 +68,20 @@ java -Xmx15g -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
 -o %s/%s.DepthOfCoverage \
 -L %s \
 -log %s/%s.DepthofCoverage.log \
--nt 4
 """ % (gatk_dir, bam_file, human_reference, output_folder, base_name, target_file, output_folder, base_name)
 output = call(command, shell=True)
 print(output)
 
 #picard
-      
+print('Running CollectAlignmentSummaryMetrics')
 # #CollectAlignmentSummaryMetrics
-# command = """
-# java -jar -Xmx40g %s/CollectAlignmentSummaryMetrics.jar \
-# I=%s \
-# O=%s.AlignmentSummaryMetrics \
-# R=%s \
-# VALIDATION_STRINGENCY=LENIENT """ % (pic_dir, input_file, filename, reference)
-# os.system(command)
+command = """
+java -jar -Xmx15g %s/CollectAlignmentSummaryMetrics.jar \
+I=%s \
+O=%s.AlignmentSummaryMetrics \
+R=%s \
+VALIDATION_STRINGENCY=LENIENT """ % (picard_dir, bam_file, base_name, human_reference)
+
 
 # #CollectGcBiasMetrics
 # command = """
@@ -125,9 +127,6 @@ print(output)
 # VALIDATION_STRINGENCY=LENIENT """ % (pic_dir, input_file)
 # os.system(command)
 
-
-
-
 # #CalculateHsMetrics WholeGenome or CalculateHsMetrics ????
 # command = """
 # java -jar -Xmx4g %s/CalculateHsMetrics.jar \
@@ -138,8 +137,8 @@ print(output)
 # VALIDATION_STRINGENCY=LENIENT """ % (pic_dir, input_file, filename, exon, exon)
 # #os.system(command)
 
+#qualimap BamQC
 
-#qualimap
 #samtools flagstat
 
 
