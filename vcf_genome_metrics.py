@@ -28,8 +28,6 @@ base=os.path.basename(vcf_file)
 base_name = base.split('.')[0]
 print(base_name)
 
-die()    
-
 #create one folder per sample
 output_folder = "/home/ubuntu/projects/output/reports/vcf/%s" % (base_name)
 if not os.path.exists(output_folder):
@@ -74,13 +72,13 @@ print(output)
 
 #snpeff
 #extract vcf
-print('extract vcf')
-command = "bgzip -d -c %s.vcf.gz > %s.vcf" % (output_base, output_base)
-output = call(command, shell=True)
-print(output)
+# print('extract vcf')
+# command = "bgzip -d -c %s.vcf.gz > %s.vcf" % (output_base, output_base)
+# output = call(command, shell=True)
+# print(output)
 
 print('snpeff')
-command = "java -Xmx5g -jar %s/snpEff.jar eff -stats %s.snpeff.full.html -i vcf GRCh37.75 %s.vcf > %s.snpeff.full.vcf" % (snpeff_path, output_base, output_base, output_base)
+command = "java -Xmx5g -jar %s/snpEff.jar eff -stats %s.snpeff.full.html -i vcf GRCh37.75 %s.vcf | bgzip -c > %s.snpeff.full.vcf.gz" % (snpeff_path, output_base, output_base, output_base)
 output = call(command, shell=True)
 print(output)
 
