@@ -141,17 +141,18 @@ I=%s \
 O=%s/%s.mean_qual_by_cycle.txt \
 CHART=%s/%s.mean_qual_by_cycle.pdf \
 VALIDATION_STRINGENCY=SILENT """ % (picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
+# output = call(command, shell=True)
+# print(output)
+
+print('Running QualityScoreDistribution')
+# #QualityScoreDistribution
+command = """java -jar %s/picard.jar QualityScoreDistribution \
+I=%s \
+O=%s/%s.qual_score_dist.txt \
+CHART=%s/%s.qual_score_dist.pdf \
+VALIDATION_STRINGENCY=SILENT """ % (picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
 output = call(command, shell=True)
 print(output)
-
-# #QualityScoreDistribution
-# command = """
-# java -jar %s/QualityScoreDistribution.jar \
-# I=%s \
-# O=%s.b37_1kg.QualityScoreDistribution \
-# CHART=%s.b37_1kg.QualityScoreDistribution.pdf \
-# VALIDATION_STRINGENCY=LENIENT """ % (pic_dir, input_file, filename, filename)
-# os.system(command)
 
 # #BamIndexStats
 # command = """
