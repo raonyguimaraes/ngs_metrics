@@ -25,6 +25,7 @@ print(base_name)
 
 
 human_reference = "/home/ubuntu/projects/input/b37/human_g1k_v37.fasta"
+human_reference = "/home/ubuntu/projects/input/hg19/hg19.fa"
 
 output_folder = "/home/ubuntu/projects/output/reports/bam"
 samtools_dir = "/home/ubuntu/projects/programs/samtools-1.3.1"
