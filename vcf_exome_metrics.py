@@ -107,6 +107,6 @@ output = call(command, shell=True)
 print(output)
 
 print('plot vcf-stats')
-command = "%s/plot-vcfstats %s.bcftools.stats.exons.q100.dp100.txt -p ." % (bcftools_path, output_base)
+command = "%s/plot-vcfstats %s.bcftools.stats.exons.q100.dp100.txt -p %s" % (bcftools_path, output_base, output_base)
 output = call(command, shell=True)
 print(output)
