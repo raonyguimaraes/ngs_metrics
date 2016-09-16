@@ -90,26 +90,26 @@ java -Xmx15g -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
 -ct 5 -ct 10 -ct 20 -ct 30 \
 -log %s/%s.DepthofCoverage.log \
 """ % (gatk_dir, bam_file, human_reference, output_folder, base_name, output_folder, base_name)
-output = call(command, shell=True)
-print(output)
+# output = call(command, shell=True)
+# print(output)
 
 #qualimap BamQC
 print('Running qualimap BamQC')
 command = """%s/qualimap bamqc \
---java-mem-size=15G \
+--java-mem-size=5G \
 -bam %s \
 -outdir %s \
 -nt 4
 """ % (qualimap_dir, bam_file, output_folder)
-# output = call(command, shell=True)
-# print(output)
+output = call(command, shell=True)
+print(output)
  
 #samtools flagstat
 print('Running samtools flagstat')
 command = """%s/samtools flagstat %s > %s/%s.samtools.flagstat.txt
 """ % (samtools_dir, bam_file, output_folder, base_name)
-# output = call(command, shell=True)
-# print(output)
+output = call(command, shell=True)
+print(output)
 
 # #picard
 # print('Running CollectAlignmentSummaryMetrics')
