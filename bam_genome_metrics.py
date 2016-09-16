@@ -65,18 +65,18 @@ if not os.path.exists(bam_file+'.bai'):
 
 print('Running featureCounts')
 #featureCounts
-command = """/home/ubuntu/projects/programs/subread-1.5.1-Linux-x86_64/bin/featureCounts -T 4 -p \
+command = """/home/ubuntu/projects/programs/subread-1.5.1-Linux-x86_64/bin/featureCounts --donotsort -T 4 -p \
 -a /home/ubuntu/projects/input/gtf/Homo_sapiens.GRCh37.75.gtf \
 -o %s/%s.featureCounts.txt \
 %s""" % (output_folder, base_name, bam_file)
-output = call(command, shell=True)
-print(output)
+# output = call(command, shell=True)
+# print(output)
 
 #bamtools
 print('Running bamtools')
 command = """/home/ubuntu/projects/programs/bamtools/bin/bamtools stats -in %s > %s/%s.bamtools.stats.txt""" % (bam_file, output_folder, base_name)
-output = call(command, shell=True)
-print(output)
+# output = call(command, shell=True)
+# print(output)
 
 print('Running DepthOfCoverage')
 #gatk DepthOfCoverage
