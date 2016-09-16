@@ -86,6 +86,7 @@ java -Xmx15g -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
 -R %s \
 -o %s/%s.DepthOfCoverage.txt \
 -nt 4 \
+--omitIntervalStatistics \
 -ct 5 -ct 10 -ct 20 -ct 30 \
 -log %s/%s.DepthofCoverage.log \
 """ % (gatk_dir, bam_file, human_reference, output_folder, base_name, output_folder, base_name)
