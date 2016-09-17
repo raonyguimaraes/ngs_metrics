@@ -25,8 +25,6 @@ input_folder = "/home/ubuntu/projects/input/fastq"
 base=os.path.basename(fastq_file)
 print(base)
 
-die()
-
 if fastq_file.startswith('s3://'):
     #download file to input folder
     command = "s3cmd get %s %s/" % (fastq_file, input_folder)
@@ -40,7 +38,6 @@ print(base_name)
 
 memory_use = "15g"
 
-
 #create one folder per sample
 output_folder = "/home/ubuntu/projects/output/reports/fastq/%s" % (base_name)
 if not os.path.exists(output_folder):
@@ -52,6 +49,8 @@ qualimap_dir = "/home/ubuntu/projects/programs/qualimap/qualimap_v2.2"
 
 #s3
 #if bam file start with s3 download from s3
+
+
 
 #fastqc
 command = "%s/fastqc -t 4 %s -o %s" % (fastqc_dir, fastq_file, output_folder)
