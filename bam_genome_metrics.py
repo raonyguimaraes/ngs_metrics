@@ -94,12 +94,12 @@ java -Xmx15g -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
 # print(output)
 
 #qualimap BamQC
+#--java-mem-size=6G \
 print('Running qualimap BamQC')
 command = """%s/qualimap bamqc \
---java-mem-size=6G \
 -bam %s \
 -outdir %s \
--nt 3
+-nt 2
 """ % (qualimap_dir, bam_file, output_folder)
 output = call(command, shell=True)
 print(output)
