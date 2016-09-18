@@ -50,13 +50,14 @@ qualimap_dir = "/home/ubuntu/projects/programs/qualimap/qualimap_v2.2"
 #s3
 #if bam file start with s3 download from s3
 
-
-
 #fastqc
-command = "%s/fastqc -t 2 %s -o %s" % (fastqc_dir, fastq_file, output_folder)
+command = "%s/fastqc -t 4 %s -o %s" % (fastqc_dir, fastq_file, output_folder)
 output = call(command, shell=True)
 print(output)
 #done already!
+
+#removefastq
+os.remove(fastq_file)
 
 # print('Running featureCounts')
 # #featureCounts
