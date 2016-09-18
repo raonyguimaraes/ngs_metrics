@@ -98,6 +98,7 @@ output = call(command, shell=True)
 print(output)
 
 #delete file
+os.remove(vcf_file)
 
 
 # #WGC081270U.filtered.exons.q100.dp100.vcf
