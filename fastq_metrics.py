@@ -27,7 +27,7 @@ print(base)
 
 if fastq_file.startswith('s3://'):
     #download file to input folder
-    command = "s3cmd get %s %s/" % (fastq_file, input_folder)
+    command = "s3cmd get --force %s %s/" % (fastq_file, input_folder)
     output = call(command, shell=True)
     print(output)
     fastq_file = "%s/%s" % (input_folder, base)
