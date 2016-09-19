@@ -7,12 +7,10 @@ import os
 import argparse
 parser = argparse.ArgumentParser()
 
-parser.add_argument("-i", "--input", help="FASTQ file (can be the location on S3)")
-
+parser.add_argument("-i", "--input", help="FASTQ file (can be the location on S3)", nargs='+')
 
 args = parser.parse_args()
-fastq_file = args.input
-
+fastq_files = args.input
 
 print(fastq_file)
 
