@@ -25,6 +25,9 @@ input_folder = "/home/ubuntu/projects/input/fastq"
 
 #download all fastq files
 
+
+list_fastq_file = []
+
 for fastq_file in fastq_files:
     base=os.path.basename(fastq_file)
     print(base)
@@ -35,6 +38,7 @@ for fastq_file in fastq_files:
         output = call(command, shell=True)
         print(output)
         fastq_file = "%s/%s" % (input_folder, base)
+        list_fastq_file.append(fastq_file)
 
     # base_name = os.path.splitext(base)[0]
     base_name = base.split('.')[0]
@@ -54,7 +58,7 @@ qualimap_dir = "/home/ubuntu/projects/programs/qualimap/qualimap_v2.2"
 #if bam file start with s3 download from s3
 
 #fastqc
-command = "%s/fastqc -t 4 %s -o %s" % (fastqc_dir, " ".join(fastq_files), output_folder)
+command = "%s/fastqc -t 4 %s -o %s" % (fastqc_dir, " ".join(list_fastq_file), output_folder)
 output = call(command, shell=True)
 print(output)
 #done already!
