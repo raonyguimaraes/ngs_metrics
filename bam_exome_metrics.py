@@ -86,28 +86,28 @@ command = """%s/featureCounts --donotsort -T %s -p \
 -a %s \
 -o %s/%s.featureCounts.txt \
 %s""" % (featurecounts_dir, n_cores, gtf_file, output_folder, base_name, bam_file)
-output = call(command, shell=True)
-print(output)
-
-die()
-
-#bamtools
-print('Running bamtools')
-command = """/home/ubuntu/projects/programs/bamtools/bin/bamtools stats -in %s > %s/%s.bamtools.stats.txt""" % (bam_file, output_folder, base_name)
-output = call(command, shell=True)
-print(output)
+# output = call(command, shell=True)
+# print(output)
 
 print('Running DepthOfCoverage')
 #gatk DepthOfCoverage
 command = """
-java -Xmx15g -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
+java -Xmx%sg -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
 -I %s \
 -R %s \
 -o %s/%s.DepthOfCoverage.txt \
 -L %s \
 -ct 15 -ct 50 -ct 100 -ct 150 -ct 200 \
 -log %s/%s.DepthofCoverage.log \
-""" % (gatk_dir, bam_file, human_reference, output_folder, base_name, target_file, output_folder, base_name)
+-nt %s
+""" % (memory, gatk_dir, bam_file, human_reference, output_folder, base_name, target_file, output_folder, base_name, n_cores)
+output = call(command, shell=True)
+print(output)
+die()
+
+#bamtools
+print('Running bamtools')
+command = """/home/ubuntu/projects/programs/bamtools/bin/bamtools stats -in %s > %s/%s.bamtools.stats.txt""" % (bam_file, output_folder, base_name)
 output = call(command, shell=True)
 print(output)
 
