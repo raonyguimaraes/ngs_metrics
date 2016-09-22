@@ -46,7 +46,7 @@ print(bam_file)
 if bam_file.startswith('s3://'):
     #download file to input folder
     command = "s3cmd get --continue %s %s/" % (bam_file, input_folder)
-    output = check_output(command)
+    output = call(command, shell=True)
     logging.info(output)
     print(output)
     # print(command)
@@ -56,7 +56,7 @@ die()
 if not os.path.exists(bam_file+'.bai'):
     #Download index
     command = "s3cmd get --continue %s %s/" % (original_bam, input_folder)
-    output = check_output(command)
+    output = call(command, shell=True)
     logging.info(output)
     print(output)
 
