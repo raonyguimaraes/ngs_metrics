@@ -153,7 +153,7 @@ VALIDATION_STRINGENCY=SILENT""" % (memory, picard_dir, bam_file, output_folder, 
 
 print('Running CollectInsertSizeMetrics')
 #CollectInsertSizeMetrics
-command = """java -Xmx%s -jar %s/picard.jar CollectInsertSizeMetrics \
+command = """java -Xmx%sg -jar %s/picard.jar CollectInsertSizeMetrics \
 I=%s \
 O=%s/%s.insert_size_metrics.txt \
 H=%s/%s.insert_size_histogram.pdf \
@@ -166,7 +166,7 @@ die()
 
 # #MeanQualityByCycle
 print('Running MeanQualityByCycle')
-command = """java -Xmx%s -jar %s/picard.jar MeanQualityByCycle \
+command = """java -Xmx%sg -jar %s/picard.jar MeanQualityByCycle \
 I=%s \
 O=%s/%s.mean_qual_by_cycle.txt \
 CHART=%s/%s.mean_qual_by_cycle.pdf \
@@ -176,7 +176,7 @@ print(output)
 
 print('Running QualityScoreDistribution')
 # #QualityScoreDistribution
-command = """java -Xmx%s -jar %s/picard.jar QualityScoreDistribution \
+command = """java -Xmx%sg -jar %s/picard.jar QualityScoreDistribution \
 I=%s \
 O=%s/%s.qual_score_dist.txt \
 CHART=%s/%s.qual_score_dist.pdf \
