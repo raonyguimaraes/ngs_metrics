@@ -82,7 +82,7 @@ command = """%s/sambamba_v0.6.4 flagstat -t %s -p %s > %s/%s.samtools.flagstat.t
 
 print('Running featureCounts')
 #featureCounts
-command = """%s/featureCounts -T %s -p \
+command = """%s/featureCounts --donotsort -T %s -p \
 -a %s \
 -o %s/%s.featureCounts.txt \
 %s""" % (featurecounts_dir, n_cores, gtf_file, output_folder, base_name, bam_file)
