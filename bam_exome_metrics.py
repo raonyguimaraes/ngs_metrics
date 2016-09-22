@@ -99,6 +99,7 @@ java -Xmx%sg -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
 -L %s \
 -ct 15 -ct 50 -ct 100 -ct 150 -ct 200 \
 -log %s/%s.DepthofCoverage.log \
+--omitIntervalStatistics \
 -nt %s
 """ % (memory, gatk_dir, bam_file, human_reference, output_folder, base_name, target_file, output_folder, base_name, n_cores)
 output = call(command, shell=True)
