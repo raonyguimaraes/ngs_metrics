@@ -30,12 +30,14 @@ print(bam_file, target_file)
 
 human_reference = "/home/ubuntu/projects/input/b37/human_g1k_v37.fasta" #84 features
 human_reference = "/home/ubuntu/projects/input/grch37/d5/hs37d5.fa" #86 features
+gtf_file = "/home/ubuntu/projects/input/gtf/Homo_sapiens.GRCh37.75.gtf"
 
 samtools_dir = "/home/ubuntu/projects/programs/samtools-1.3.1"
 programs_dir = "/home/ubuntu/projects/programs/"
 picard_dir = "/home/ubuntu/projects/programs/picard"
 gatk_dir = "/home/ubuntu/projects/programs/gatk"
 qualimap_dir = "/home/ubuntu/projects/programs/qualimap/qualimap_v2.2"
+featurecounts_dir = "/home/ubuntu/projects/programs/subread-1.5.1-Linux-x86_64/bin"
 
 input_folder = '/home/ubuntu/projects/input/bam'
 output_folder = '/home/ubuntu/projects/output/bam'
@@ -75,19 +77,19 @@ if not os.path.exists(bam_file+'.bai'):
 print('Running sambamba flagstat')
 command = """%s/sambamba_v0.6.4 flagstat -t %s -p %s > %s/%s.samtools.flagstat.txt
 """ % (programs_dir, n_cores, bam_file, output_folder, base_name)
+# output = call(command, shell=True)
+# print(output)
+
+print('Running featureCounts')
+#featureCounts
+command = """%s/featureCounts -T %s -p \
+-a %s \
+-o %s/%s.featureCounts.txt \
+%s""" % (output_folder, n_cores, gtf_file, base_name, bam_file)
 output = call(command, shell=True)
 print(output)
 
 die()
-
-print('Running featureCounts')
-#featureCounts
-command = """/home/ubuntu/projects/programs/subread-1.5.1-Linux-x86_64/bin/featureCounts -T 4 -p \
--a /home/ubuntu/projects/input/gtf/Homo_sapiens.GRCh37.75.gtf \
--o %s/%s.featureCounts.txt \
-%s""" % (output_folder, base_name, bam_file)
-output = call(command, shell=True)
-print(output)
 
 #bamtools
 print('Running bamtools')
