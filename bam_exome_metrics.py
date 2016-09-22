@@ -33,6 +33,7 @@ human_reference = "/home/ubuntu/projects/input/grch37/d5/hs37d5.fa" #86 features
 gtf_file = "/home/ubuntu/projects/input/gtf/Homo_sapiens.GRCh37.75.gtf"
 
 samtools_dir = "/home/ubuntu/projects/programs/samtools-1.3.1"
+bamtools_dir = "/home/ubuntu/projects/programs/bamtools/bin/bamtools"
 programs_dir = "/home/ubuntu/projects/programs/"
 picard_dir = "/home/ubuntu/projects/programs/picard"
 gatk_dir = "/home/ubuntu/projects/programs/gatk"
@@ -113,16 +114,15 @@ command = """%s/qualimap bamqc \
 -outdir %s \
 -nt %s
 """ % (qualimap_dir, memory, bam_file, output_folder, n_cores)
-output = call(command, shell=True)
-print(output)
-die()
+# output = call(command, shell=True)
+# print(output)
+
 
 #bamtools
 print('Running bamtools')
 command = """/home/ubuntu/projects/programs/bamtools/bin/bamtools stats -in %s > %s/%s.bamtools.stats.txt""" % (bam_file, output_folder, base_name)
 output = call(command, shell=True)
 print(output)
-
 die()
 
 #picard
