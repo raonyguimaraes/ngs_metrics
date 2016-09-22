@@ -132,22 +132,24 @@ I=%s \
 O=%s/%s.AlignmentSummaryMetrics.txt \
 R=%s \
 VALIDATION_STRINGENCY=SILENT""" % (memory, picard_dir, bam_file, output_folder, base_name, human_reference)
-output = call(command, shell=True)
-print(output)
-die()
+# output = call(command, shell=True)
+# print(output)
+
 
 print('Running CollectGcBiasMetrics')
 # #CollectGcBiasMetrics
 command = """
-java -jar -Xmx15g %s/picard.jar CollectGcBiasMetrics \
+java -jar -Xmx%sg %s/picard.jar CollectGcBiasMetrics \
 I=%s \
 O=%s/%s.gc_bias_metrics.txt \
 R=%s \
 CHART=%s/%s.gc_bias_metrics.pdf \
 S=%s/%s.gc_bias_summary_metrics.txt \
-VALIDATION_STRINGENCY=SILENT""" % (picard_dir, bam_file, output_folder, base_name, human_reference, output_folder, base_name, output_folder, base_name)
+VALIDATION_STRINGENCY=SILENT""" % (memory, picard_dir, bam_file, output_folder, base_name, human_reference, output_folder, base_name, output_folder, base_name)
 output = call(command, shell=True)
 print(output)
+die()
+
 
 print('Running CollectInsertSizeMetrics')
 #CollectInsertSizeMetrics
