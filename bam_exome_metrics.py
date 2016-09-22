@@ -1,55 +1,77 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from subprocess import call
+from subprocess import call, check_output, run
 import os
-
+from multiprocessing import Pool
+import time
 import argparse
+
+import logging
+logging.basicConfig(filename='bam_exome_metrics.log',level=logging.DEBUG)
+
 parser = argparse.ArgumentParser()
 
-parser.add_argument("-i", "--input", help="BAM file (can be the location on S3)")
+parser.add_argument("-i", "--input", help="BAM file (can be the location on S3)", nargs='+')
 parser.add_argument("-t", "--target", help="Target File")
+parser.add_argument("-n", "--cores", help="Number of Cores to use")
+parser.add_argument("-m", "--memory", help="RAM Memory to use in GB")
 
 args = parser.parse_args()
+
 bam_file = args.input
 target_file = args.target
+n_cores = int(args.cores)
+memory = int(args.memory)
 
 print(bam_file, target_file)
-
-#mock up
-# bam_file = "../../../input/bam/test.recal.bam"
-
-base=os.path.basename(bam_file)
-base_name = os.path.splitext(base)[0]
-print(base_name)
-
-memory_use = "15g"
 
 human_reference = "/home/ubuntu/projects/input/b37/human_g1k_v37.fasta" #84 features
 human_reference = "/home/ubuntu/projects/input/grch37/d5/hs37d5.fa" #86 features
 
-#create one folder per sample
-output_folder = "/home/ubuntu/projects/output/reports/bam/%s" % (base_name)
-if not os.path.exists(output_folder):
-    os.makedirs(output_folder)
-
 samtools_dir = "/home/ubuntu/projects/programs/samtools-1.3.1"
+programs_dir = "/home/ubuntu/projects/programs/"
 picard_dir = "/home/ubuntu/projects/programs/picard"
 gatk_dir = "/home/ubuntu/projects/programs/gatk"
 qualimap_dir = "/home/ubuntu/projects/programs/qualimap/qualimap_v2.2"
 
-#s3
-#if bam file start with s3 download from s3
+input_folder = '/home/ubuntu/projects/input/bam'
+output_folder = '/home/ubuntu/projects/output/bam'
+
+base=os.path.basename(bam_file)
+base_name = os.path.splitext(base)[0]
+print(base_name)
+#download file to input folder
+command = "s3cmd get --continue %s %s/" % (bam_file, input_folder)
+output = run(command, stdout=subprocess.PIPE)
+logging.info(output)
+print(output)
+# print(command)
+bam_file = "%s/%s" % (input_folder, base)
 
 if not os.path.exists(bam_file+'.bai'):
-    print('Indexing BAM')
-    #index bam
-    command = "%s/samtools index %s" % (samtools_dir, bam_file)
-    output = call(command, shell=True)
+    #Download index
+    command = "s3cmd get --continue %s %s/" % (original_bam, input_folder)
+    output = run(command, stdout=subprocess.PIPE)
+    logging.info(output)
     print(output)
 
-#fastqc
-#done already!
+
+# #samtools flagstat
+# print('Running samtools flagstat')
+# command = """%s/samtools flagstat %s > %s/%s.samtools.flagstat.txt
+# """ % (samtools_dir, bam_file, output_folder, base_name)
+# output = call(command, shell=True)
+# print(output)
+
+#samtools flagstat
+print('Running sambamba flagstat')
+command = """%s/sambamba_v0.6.4 flagstat -t %s -p %s > %s/%s.samtools.flagstat.txt
+""" % (programs_dir, memory, bam_file, output_folder, base_name)
+output = call(command, shell=True)
+print(output)
+
+die()
 
 print('Running featureCounts')
 #featureCounts
@@ -89,13 +111,6 @@ command = """%s/qualimap bamqc \
 -outdir %s \
 -nt 4
 """ % (qualimap_dir, bam_file, output_folder)
-output = call(command, shell=True)
-print(output)
- 
-#samtools flagstat
-print('Running samtools flagstat')
-command = """%s/samtools flagstat %s > %s/%s.samtools.flagstat.txt
-""" % (samtools_dir, bam_file, output_folder, base_name)
 output = call(command, shell=True)
 print(output)
 
