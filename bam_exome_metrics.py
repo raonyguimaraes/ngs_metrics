@@ -42,14 +42,17 @@ output_folder = '/home/ubuntu/projects/output/bam'
 base=os.path.basename(bam_file)
 base_name = os.path.splitext(base)[0]
 print(base_name)
-#download file to input folder
-command = "s3cmd get --continue %s %s/" % (bam_file, input_folder)
-output = check_output(command)
-logging.info(output)
-print(output)
-# print(command)
-bam_file = "%s/%s" % (input_folder, base)
-
+print(bam_file)
+if bam_file.startswith('s3://'):
+    #download file to input folder
+    command = "s3cmd get --continue %s %s/" % (bam_file, input_folder)
+    output = check_output(command)
+    logging.info(output)
+    print(output)
+    # print(command)
+    bam_file = "%s/%s" % (input_folder, base)
+print(bam_file)
+die()
 if not os.path.exists(bam_file+'.bai'):
     #Download index
     command = "s3cmd get --continue %s %s/" % (original_bam, input_folder)
