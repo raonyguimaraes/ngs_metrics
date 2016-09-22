@@ -32,6 +32,8 @@ human_reference = "/home/ubuntu/projects/input/b37/human_g1k_v37.fasta" #84 feat
 human_reference = "/home/ubuntu/projects/input/grch37/d5/hs37d5.fa" #86 features
 gtf_file = "/home/ubuntu/projects/input/gtf/Homo_sapiens.GRCh37.75.gtf"
 
+
+fastqc_dir = "/home/ubuntu/projects/programs/fastqc/FastQC/"
 samtools_dir = "/home/ubuntu/projects/programs/samtools-1.3.1"
 bamtools_dir = "/home/ubuntu/projects/programs/bamtools/bin/bamtools"
 programs_dir = "/home/ubuntu/projects/programs/"
@@ -73,6 +75,13 @@ if not os.path.exists(bam_file+'.bai'):
 # """ % (samtools_dir, bam_file, output_folder, base_name)
 # output = call(command, shell=True)
 # print(output)
+
+command = "%s/fastqc -t %s %s -o %s" % (fastqc_dir, n_cores, bam_file, output_folder)
+print(command)
+output = call(command, shell=True)
+print(output)
+die()
+                
 
 #samtools flagstat
 print('Running sambamba flagstat')
