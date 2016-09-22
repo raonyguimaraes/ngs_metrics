@@ -117,25 +117,24 @@ command = """%s/qualimap bamqc \
 # output = call(command, shell=True)
 # print(output)
 
-
 #bamtools
 print('Running bamtools')
 command = """/home/ubuntu/projects/programs/bamtools/bin/bamtools stats -in %s > %s/%s.bamtools.stats.txt""" % (bam_file, output_folder, base_name)
-output = call(command, shell=True)
-print(output)
-die()
+# output = call(command, shell=True)
+# print(output)
 
 #picard
 print('Running CollectAlignmentSummaryMetrics')
 # #CollectAlignmentSummaryMetrics
 command = """
-java -jar -Xmx15g %s/picard.jar CollectAlignmentSummaryMetrics \
+java -jar -Xmx%sg %s/picard.jar CollectAlignmentSummaryMetrics \
 I=%s \
 O=%s/%s.AlignmentSummaryMetrics.txt \
 R=%s \
-VALIDATION_STRINGENCY=SILENT""" % (picard_dir, bam_file, output_folder, base_name, human_reference)
+VALIDATION_STRINGENCY=SILENT""" % (memory, picard_dir, bam_file, output_folder, base_name, human_reference)
 output = call(command, shell=True)
 print(output)
+die()
 
 print('Running CollectGcBiasMetrics')
 # #CollectGcBiasMetrics
