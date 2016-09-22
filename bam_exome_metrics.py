@@ -146,9 +146,9 @@ R=%s \
 CHART=%s/%s.gc_bias_metrics.pdf \
 S=%s/%s.gc_bias_summary_metrics.txt \
 VALIDATION_STRINGENCY=SILENT""" % (memory, picard_dir, bam_file, output_folder, base_name, human_reference, output_folder, base_name, output_folder, base_name)
-output = call(command, shell=True)
-print(output)
-die()
+# output = call(command, shell=True)
+# print(output)
+
 
 
 print('Running CollectInsertSizeMetrics')
@@ -158,9 +158,11 @@ I=%s \
 O=%s/%s.insert_size_metrics.txt \
 H=%s/%s.insert_size_histogram.pdf \
 M=0.5 \
-VALIDATION_STRINGENCY=SILENT""" % (memory_use, picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
+VALIDATION_STRINGENCY=SILENT""" % (memory, picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
 output = call(command, shell=True)
 print(output)
+
+die()
 
 # #MeanQualityByCycle
 print('Running MeanQualityByCycle')
@@ -168,7 +170,7 @@ command = """java -Xmx%s -jar %s/picard.jar MeanQualityByCycle \
 I=%s \
 O=%s/%s.mean_qual_by_cycle.txt \
 CHART=%s/%s.mean_qual_by_cycle.pdf \
-VALIDATION_STRINGENCY=SILENT """ % (memory_use, picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
+VALIDATION_STRINGENCY=SILENT """ % (memory, picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
 output = call(command, shell=True)
 print(output)
 
@@ -178,7 +180,7 @@ command = """java -Xmx%s -jar %s/picard.jar QualityScoreDistribution \
 I=%s \
 O=%s/%s.qual_score_dist.txt \
 CHART=%s/%s.qual_score_dist.pdf \
-VALIDATION_STRINGENCY=SILENT """ % (memory_use, picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
+VALIDATION_STRINGENCY=SILENT """ % (memory, picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
 output = call(command, shell=True)
 print(output)
 
