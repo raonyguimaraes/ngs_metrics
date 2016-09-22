@@ -20,6 +20,8 @@ parser.add_argument("-m", "--memory", help="RAM Memory to use in GB")
 args = parser.parse_args()
 
 bam_file = args.input
+original_bam = bam_file
+
 target_file = args.target
 n_cores = int(args.cores)
 memory = int(args.memory)
@@ -57,7 +59,7 @@ print(bam_file)
 
 if not os.path.exists(bam_file+'.bai'):
     #Download index
-    command = "s3cmd get --continue %s %s/" % (original_bam, input_folder)
+    command = "s3cmd get --continue %s.bai %s/" % (original_bam, input_folder)
     output = call(command, shell=True)
     logging.info(output)
     print(output)
