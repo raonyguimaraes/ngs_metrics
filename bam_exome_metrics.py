@@ -102,6 +102,17 @@ java -Xmx%sg -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
 --omitIntervalStatistics \
 -nt %s
 """ % (memory, gatk_dir, bam_file, human_reference, output_folder, base_name, target_file, output_folder, base_name, n_cores)
+# output = call(command, shell=True)
+# print(output)
+
+#qualimap BamQC
+print('Running qualimap BamQC')
+command = """%s/qualimap bamqc \
+--java-mem-size=%sG \
+-bam %s \
+-outdir %s \
+-nt %s
+""" % (qualimap_dir, memory, bam_file, output_folder, n_cores)
 output = call(command, shell=True)
 print(output)
 die()
@@ -112,17 +123,7 @@ command = """/home/ubuntu/projects/programs/bamtools/bin/bamtools stats -in %s >
 output = call(command, shell=True)
 print(output)
 
-
-#qualimap BamQC
-print('Running qualimap BamQC')
-command = """%s/qualimap bamqc \
---java-mem-size=15G \
--bam %s \
--outdir %s \
--nt 4
-""" % (qualimap_dir, bam_file, output_folder)
-output = call(command, shell=True)
-print(output)
+die()
 
 #picard
 print('Running CollectAlignmentSummaryMetrics')
