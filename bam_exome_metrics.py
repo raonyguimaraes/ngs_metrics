@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from subprocess import call, check_output, run
+from subprocess import call, check_output#, run
 import subprocess
 import os
 from multiprocessing import Pool
@@ -44,7 +44,7 @@ base_name = os.path.splitext(base)[0]
 print(base_name)
 #download file to input folder
 command = "s3cmd get --continue %s %s/" % (bam_file, input_folder)
-output = run(command, stdout=subprocess.PIPE)
+output = check_output(command)
 logging.info(output)
 print(output)
 # print(command)
@@ -53,7 +53,7 @@ bam_file = "%s/%s" % (input_folder, base)
 if not os.path.exists(bam_file+'.bai'):
     #Download index
     command = "s3cmd get --continue %s %s/" % (original_bam, input_folder)
-    output = run(command, stdout=subprocess.PIPE)
+    output = check_output(command)
     logging.info(output)
     print(output)
 
