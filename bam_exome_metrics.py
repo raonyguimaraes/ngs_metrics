@@ -85,7 +85,7 @@ print('Running featureCounts')
 command = """%s/featureCounts -T %s -p \
 -a %s \
 -o %s/%s.featureCounts.txt \
-%s""" % (output_folder, n_cores, gtf_file, base_name, bam_file)
+%s""" % (output_folder, n_cores, gtf_file, output_folder, base_name, bam_file)
 output = call(command, shell=True)
 print(output)
 
