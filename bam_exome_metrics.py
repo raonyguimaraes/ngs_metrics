@@ -12,7 +12,7 @@ logging.basicConfig(filename='bam_exome_metrics.log',level=logging.DEBUG)
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("-i", "--input", help="BAM file (can be the location on S3)", nargs='+')
+parser.add_argument("-i", "--input", help="BAM file (can be the location on S3)")
 parser.add_argument("-t", "--target", help="Target File")
 parser.add_argument("-n", "--cores", help="Number of Cores to use")
 parser.add_argument("-m", "--memory", help="RAM Memory to use in GB")
