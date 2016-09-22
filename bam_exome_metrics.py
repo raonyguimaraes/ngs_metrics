@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from subprocess import call, check_output, run
+import subprocess
 import os
 from multiprocessing import Pool
 import time
