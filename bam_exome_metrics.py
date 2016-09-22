@@ -9,7 +9,6 @@ import time
 import argparse
 
 import logging
-logging.basicConfig(filename='bam_exome_metrics.log',level=logging.DEBUG)
 
 parser = argparse.ArgumentParser()
 
@@ -41,6 +40,9 @@ output_folder = '/home/ubuntu/projects/output/bam'
 
 base=os.path.basename(bam_file)
 base_name = os.path.splitext(base)[0]
+
+logging.basicConfig(filename='%s.run.log.txt' % (base_name),level=logging.DEBUG)
+
 print(base_name)
 print(bam_file)
 if bam_file.startswith('s3://'):
@@ -52,14 +54,13 @@ if bam_file.startswith('s3://'):
     # print(command)
     bam_file = "%s/%s" % (input_folder, base)
 print(bam_file)
-die()
+
 if not os.path.exists(bam_file+'.bai'):
     #Download index
     command = "s3cmd get --continue %s %s/" % (original_bam, input_folder)
     output = call(command, shell=True)
     logging.info(output)
     print(output)
-
 
 # #samtools flagstat
 # print('Running samtools flagstat')
