@@ -159,10 +159,8 @@ O=%s/%s.insert_size_metrics.txt \
 H=%s/%s.insert_size_histogram.pdf \
 M=0.5 \
 VALIDATION_STRINGENCY=SILENT""" % (memory, picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
-output = call(command, shell=True)
-print(output)
-
-die()
+# output = call(command, shell=True)
+# print(output)
 
 # #MeanQualityByCycle
 print('Running MeanQualityByCycle')
@@ -173,6 +171,8 @@ CHART=%s/%s.mean_qual_by_cycle.pdf \
 VALIDATION_STRINGENCY=SILENT """ % (memory, picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
 output = call(command, shell=True)
 print(output)
+
+die()
 
 print('Running QualityScoreDistribution')
 # #QualityScoreDistribution
