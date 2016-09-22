@@ -74,7 +74,7 @@ if not os.path.exists(bam_file+'.bai'):
 #samtools flagstat
 print('Running sambamba flagstat')
 command = """%s/sambamba_v0.6.4 flagstat -t %s -p %s > %s/%s.samtools.flagstat.txt
-""" % (programs_dir, memory, bam_file, output_folder, base_name)
+""" % (programs_dir, n_cores, bam_file, output_folder, base_name)
 output = call(command, shell=True)
 print(output)
 
