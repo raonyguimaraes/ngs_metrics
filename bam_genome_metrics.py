@@ -10,26 +10,34 @@ import argparse
 
 import logging
 
+def chunks(l, n):
+    """Yield successive n-sized chunks from l."""
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
+
 parser = argparse.ArgumentParser()
 
-parser.add_argument("-i", "--input", help="BAM file (can be the location on S3)")
+parser.add_argument("-i", "--input", help="BAM file (can be the location on S3)", nargs='+')
 parser.add_argument("-n", "--cores", help="Number of Cores to use")
 parser.add_argument("-m", "--memory", help="RAM Memory to use in GB")
 
 args = parser.parse_args()
 
-bam_file = args.input
-original_bam = bam_file
+bam_files = args.input
+print(bam_files)
+bam_groups = list(chunks(bam_files,n_cores))
+print(bam_groups)
+
+# original_bam = bam_file
 
 n_cores = int(args.cores)
 memory = int(args.memory)
 
-print(bam_file)
+# print(bam_file)
 
 human_reference = "/home/ubuntu/projects/input/b37/human_g1k_v37.fasta" #84 features
 human_reference = "/home/ubuntu/projects/input/grch37/d5/hs37d5.fa" #86 features
 gtf_file = "/home/ubuntu/projects/input/gtf/Homo_sapiens.GRCh37.75.gtf"
-
 
 fastqc_dir = "/home/ubuntu/projects/programs/fastqc/FastQC/"
 samtools_dir = "/home/ubuntu/projects/programs/samtools-1.3.1"
@@ -42,36 +50,44 @@ featurecounts_dir = "/home/ubuntu/projects/programs/subread-1.5.1-Linux-x86_64/b
 
 input_folder = '/home/ubuntu/projects/input/bam'
 
-base=os.path.basename(bam_file)
-base_name = os.path.splitext(base)[0]
 
 # print(base, base_name)
 
-output_folder = '/home/ubuntu/projects/output/bam/%s' % (base_name)
+output_folder = '/home/ubuntu/projects/output/bam/'
 
-if not os.path.exists(output_folder):
-    os.makedirs(output_folder)
+# if not os.path.exists(output_folder):
+#     os.makedirs(output_folder)
 
 logging.basicConfig(filename='%s.run.log.txt' % (base_name),level=logging.DEBUG)
 
-print(base_name)
-print(bam_file)
+# print(base_name)
+# print(bam_file)
 
-if bam_file.startswith('s3://'):
-    #download file to input folder
-    command = "s3cmd get --continue %s %s/" % (bam_file, input_folder)
-    output = call(command, shell=True)
-    logging.info(output)
-    print(output)
-    # print(command)
-    bam_file = "%s/%s" % (input_folder, base)
-print(bam_file)
+for bam_group in bam_group:
+    for bam_file in bam_group:
 
-if not os.path.exists(bam_file+'.bai'):
-    #Download index
-    command = "s3cmd get --continue %s.bai %s/" % (original_bam, input_folder)
+        base=os.path.basename(bam_file)
+        base_name = os.path.splitext(base)[0]
+        if bam_file.startswith('s3://'):
+            #download file to input folder
+            command = "s3cmd get --continue %s %s/" % (bam_file, input_folder)
+            output = call(command, shell=True)
+            logging.info(output)
+            print(output)
+            # print(command)
+            bam_file = "%s/%s" % (input_folder, base)
+        print(bam_file)
+
+        if not os.path.exists(bam_file+'.bai'):
+            #Download index
+            command = "s3cmd get --continue %s.bai %s/" % (original_bam, input_folder)
+            output = call(command, shell=True)
+            logging.info(output)
+            print(output)
+
+    command = "%s/fastqc -t %s %s -o %s" % (fastqc_dir, n_cores, " ".join(bam_group), output_folder)
+    print(command)
     output = call(command, shell=True)
-    logging.info(output)
     print(output)
 
 # #samtools flagstat
@@ -81,54 +97,60 @@ if not os.path.exists(bam_file+'.bai'):
 # output = call(command, shell=True)
 # print(output)
 
-command = "%s/fastqc -t %s %s -o %s" % (fastqc_dir, n_cores, bam_file, output_folder)
-print(command)
-output = call(command, shell=True)
-print(output)
+for bam_group in bam_group:
+    for bam_file in bam_group:
 
-#samtools flagstat
-print('Running sambamba flagstat')
-command = """%s/sambamba_v0.6.4 flagstat -t %s -p %s > %s/%s.samtools.flagstat.txt
-""" % (programs_dir, n_cores, bam_file, output_folder, base_name)
-output = call(command, shell=True)
-print(output)
+        base=os.path.basename(bam_file)
+        base_name = os.path.splitext(base)[0]
+        output_folder = '/home/ubuntu/projects/output/bam/%s' % (base_name)
 
-print('Running featureCounts')
-#featureCounts
-command = """%s/featureCounts --donotsort -T %s -p \
--a %s \
--o %s/%s.featureCounts.txt \
-%s""" % (featurecounts_dir, n_cores, gtf_file, output_folder, base_name, bam_file)
-output = call(command, shell=True)
-print(output)
+        if not os.path.exists(output_folder):
+            os.makedirs(output_folder)
 
-print('Running DepthOfCoverage')
-#gatk DepthOfCoverage
-command = """
-java -Xmx%sg -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
--I %s \
--R %s \
--o %s/%s.DepthOfCoverage.txt \
--ct 15 -ct 50 -ct 100 -ct 150 -ct 200 \
--log %s/%s.DepthofCoverage.log \
---omitIntervalStatistics \
--nt %s
-""" % (memory, gatk_dir, bam_file, human_reference, output_folder, base_name, output_folder, base_name, n_cores)
-output = call(command, shell=True)
-print(output)
 
-#qualimap BamQC
-print('Running qualimap BamQC')
-command = """%s/qualimap bamqc \
---java-mem-size=%sG \
--bam %s \
--outdir %s \
--nt %s
-""" % (qualimap_dir, memory, bam_file, output_folder, n_cores)
-output = call(command, shell=True)
-print(output)
+        #samtools flagstat
+        print('Running sambamba flagstat')
+        command = """%s/sambamba_v0.6.4 flagstat -t %s -p %s > %s/%s.samtools.flagstat.txt
+        """ % (programs_dir, n_cores, bam_file, output_folder, base_name)
+        output = call(command, shell=True)
+        print(output)
 
-os.remove(bam_file)
+        print('Running featureCounts')
+        #featureCounts
+        command = """%s/featureCounts --donotsort -T %s -p \
+        -a %s \
+        -o %s/%s.featureCounts.txt \
+        %s""" % (featurecounts_dir, n_cores, gtf_file, output_folder, base_name, bam_file)
+        output = call(command, shell=True)
+        print(output)
+
+        print('Running DepthOfCoverage')
+        #gatk DepthOfCoverage
+        command = """
+        java -Xmx%sg -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
+        -I %s \
+        -R %s \
+        -o %s/%s.DepthOfCoverage.txt \
+        -ct 15 -ct 50 -ct 100 -ct 150 -ct 200 \
+        -log %s/%s.DepthofCoverage.log \
+        --omitIntervalStatistics \
+        -nt %s
+        """ % (memory, gatk_dir, bam_file, human_reference, output_folder, base_name, output_folder, base_name, n_cores)
+        output = call(command, shell=True)
+        print(output)
+
+        #qualimap BamQC
+        print('Running qualimap BamQC')
+        command = """%s/qualimap bamqc \
+        --java-mem-size=%sG \
+        -bam %s \
+        -outdir %s \
+        -nt %s
+        """ % (qualimap_dir, memory, bam_file, output_folder, n_cores)
+        output = call(command, shell=True)
+        print(output)
+
+        os.remove(bam_file)
 
 #bamtools do not run in parallel
 # print('Running bamtools')
