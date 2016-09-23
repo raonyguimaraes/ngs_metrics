@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from subprocess import call, check_output, run
+from subprocess import call, check_output#, run
 import subprocess
 import os
 from multiprocessing import Pool
@@ -62,7 +62,7 @@ print(bam_file)
 if bam_file.startswith('s3://'):
     #download file to input folder
     command = "s3cmd get --continue %s %s/" % (bam_file, input_folder)
-    output = run(command, stdout=subprocess.PIPE)
+    output = call(command, shell=True)
     logging.info(output)
     print(output)
     # print(command)
@@ -72,7 +72,7 @@ print(bam_file)
 if not os.path.exists(bam_file+'.bai'):
     #Download index
     command = "s3cmd get --continue %s.bai %s/" % (original_bam, input_folder)
-    output = run(command, stdout=subprocess.PIPE)
+    output = call(command, shell=True)
     logging.info(output)
     print(output)
 
@@ -85,17 +85,16 @@ if not os.path.exists(bam_file+'.bai'):
 
 command = "%s/fastqc -t %s %s -o %s" % (fastqc_dir, n_cores, bam_file, output_folder)
 print(command)
-output = run(command, stdout=subprocess.PIPE)
+output = call(command, shell=True)
 print(output)
-die()
 die()
 
 #samtools flagstat
 print('Running sambamba flagstat')
 command = """%s/sambamba_v0.6.4 flagstat -t %s -p %s > %s/%s.samtools.flagstat.txt
 """ % (programs_dir, n_cores, bam_file, output_folder, base_name)
-# output = call(command, shell=True)
-# print(output)
+output = call(command, shell=True)
+print(output)
 
 print('Running featureCounts')
 #featureCounts
@@ -128,7 +127,6 @@ command = """%s/qualimap bamqc \
 --java-mem-size=%sG \
 -bam %s \
 -outdir %s \
-
 -nt %s
 """ % (qualimap_dir, memory, bam_file, output_folder, n_cores)
 output = call(command, shell=True)
