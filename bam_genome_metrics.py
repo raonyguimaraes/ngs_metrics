@@ -1,169 +1,197 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from subprocess import call
+from subprocess import call, check_output#, run
+import subprocess
 import os
-
+from multiprocessing import Pool
+import time
 import argparse
+
+import logging
+
 parser = argparse.ArgumentParser()
 
 parser.add_argument("-i", "--input", help="BAM file (can be the location on S3)")
-
+parser.add_argument("-n", "--cores", help="Number of Cores to use")
+parser.add_argument("-m", "--memory", help="RAM Memory to use in GB")
 
 args = parser.parse_args()
-bam_file = args.input
 
+bam_file = args.input
+original_bam = bam_file
+
+n_cores = int(args.cores)
+memory = int(args.memory)
 
 print(bam_file)
 
-#mock up
-# bam_file = "../../../input/bam/test.recal.bam"
-
-
-input_folder = "/home/ubuntu/projects/input/bam"
-
-base=os.path.basename(bam_file)
-
-if bam_file.startswith('s3://'):
-    #download file to input folder
-    command = "s3cmd get %s %s/" % (bam_file, input_folder)
-    output = call(command, shell=True)
-    print(output)
-    bam_file = "%s/%s" % (input_folder, base)
-
-# base_name = os.path.splitext(base)[0]
-base_name = base.split('.')[0]
-print(base_name)
-
-memory_use = "15g"
-
 human_reference = "/home/ubuntu/projects/input/b37/human_g1k_v37.fasta" #84 features
 human_reference = "/home/ubuntu/projects/input/grch37/d5/hs37d5.fa" #86 features
+gtf_file = "/home/ubuntu/projects/input/gtf/Homo_sapiens.GRCh37.75.gtf"
 
-#create one folder per sample
-output_folder = "/home/ubuntu/projects/output/reports/bam/%s" % (base_name)
-if not os.path.exists(output_folder):
-    os.makedirs(output_folder)
 
+fastqc_dir = "/home/ubuntu/projects/programs/fastqc/FastQC/"
 samtools_dir = "/home/ubuntu/projects/programs/samtools-1.3.1"
+bamtools_dir = "/home/ubuntu/projects/programs/bamtools/bin/bamtools"
+programs_dir = "/home/ubuntu/projects/programs/"
 picard_dir = "/home/ubuntu/projects/programs/picard"
 gatk_dir = "/home/ubuntu/projects/programs/gatk"
 qualimap_dir = "/home/ubuntu/projects/programs/qualimap/qualimap_v2.2"
+featurecounts_dir = "/home/ubuntu/projects/programs/subread-1.5.1-Linux-x86_64/bin"
 
-#s3
-#if bam file start with s3 download from s3
+input_folder = '/home/ubuntu/projects/input/bam'
+
+base=os.path.basename(bam_file)
+base_name = os.path.splitext(base)[0]
+
+# print(base, base_name)
+
+output_folder = '/home/ubuntu/projects/output/bam/%s' % (base_name)
+
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
+
+logging.basicConfig(filename='%s.run.log.txt' % (base_name),level=logging.DEBUG)
+
+print(base_name)
+print(bam_file)
+
+if bam_file.startswith('s3://'):
+    #download file to input folder
+    command = "s3cmd get --continue %s %s/" % (bam_file, input_folder)
+    output = call(command, shell=True)
+    logging.info(output)
+    print(output)
+    # print(command)
+    bam_file = "%s/%s" % (input_folder, base)
+print(bam_file)
 
 if not os.path.exists(bam_file+'.bai'):
-    print('Indexing BAM')
-    #index bam
-    command = "%s/samtools index %s" % (samtools_dir, bam_file)
+    #Download index
+    command = "s3cmd get --continue %s.bai %s/" % (original_bam, input_folder)
     output = call(command, shell=True)
+    logging.info(output)
     print(output)
 
-#fastqc
-#done already!
+# #samtools flagstat
+# print('Running samtools flagstat')
+# command = """%s/samtools flagstat %s > %s/%s.samtools.flagstat.txt
+# """ % (samtools_dir, bam_file, output_folder, base_name)
+# output = call(command, shell=True)
+# print(output)
+
+command = "%s/fastqc -t %s %s -o %s" % (fastqc_dir, n_cores, bam_file, output_folder)
+print(command)
+output = call(command, shell=True)
+print(output)
+
+#samtools flagstat
+print('Running sambamba flagstat')
+command = """%s/sambamba_v0.6.4 flagstat -t %s -p %s > %s/%s.samtools.flagstat.txt
+""" % (programs_dir, n_cores, bam_file, output_folder, base_name)
+output = call(command, shell=True)
+print(output)
 
 print('Running featureCounts')
 #featureCounts
-command = """/home/ubuntu/projects/programs/subread-1.5.1-Linux-x86_64/bin/featureCounts --donotsort -T 4 -p \
--a /home/ubuntu/projects/input/gtf/Homo_sapiens.GRCh37.75.gtf \
+command = """%s/featureCounts --donotsort -T %s -p \
+-a %s \
 -o %s/%s.featureCounts.txt \
-%s""" % (output_folder, base_name, bam_file)
-# output = call(command, shell=True)
-# print(output)
-
-#bamtools
-print('Running bamtools')
-command = """/home/ubuntu/projects/programs/bamtools/bin/bamtools stats -in %s > %s/%s.bamtools.stats.txt""" % (bam_file, output_folder, base_name)
-# output = call(command, shell=True)
-# print(output)
+%s""" % (featurecounts_dir, n_cores, gtf_file, output_folder, base_name, bam_file)
+output = call(command, shell=True)
+print(output)
 
 print('Running DepthOfCoverage')
 #gatk DepthOfCoverage
 command = """
-java -Xmx15g -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
+java -Xmx%sg -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
 -I %s \
 -R %s \
 -o %s/%s.DepthOfCoverage.txt \
--nt 4 \
---omitIntervalStatistics \
--ct 5 -ct 10 -ct 20 -ct 30 \
+-ct 15 -ct 50 -ct 100 -ct 150 -ct 200 \
 -log %s/%s.DepthofCoverage.log \
-""" % (gatk_dir, bam_file, human_reference, output_folder, base_name, output_folder, base_name)
-# output = call(command, shell=True)
-# print(output)
+--omitIntervalStatistics \
+-nt %s
+""" % (memory, gatk_dir, bam_file, human_reference, output_folder, base_name, output_folder, base_name, n_cores)
+output = call(command, shell=True)
+print(output)
 
 #qualimap BamQC
-#--java-mem-size=6G \
 print('Running qualimap BamQC')
 command = """%s/qualimap bamqc \
+--java-mem-size=%sG \
 -bam %s \
 -outdir %s \
--nt 2
-""" % (qualimap_dir, bam_file, output_folder)
+-nt %s
+""" % (qualimap_dir, memory, bam_file, output_folder, n_cores)
 output = call(command, shell=True)
 print(output)
- 
-#samtools flagstat
-print('Running samtools flagstat')
-command = """%s/samtools flagstat %s > %s/%s.samtools.flagstat.txt
-""" % (samtools_dir, bam_file, output_folder, base_name)
-output = call(command, shell=True)
-print(output)
+
+os.remove(bam_file)
+
+#bamtools do not run in parallel
+# print('Running bamtools')
+# command = """/home/ubuntu/projects/programs/bamtools/bin/bamtools stats -in %s > %s/%s.bamtools.stats.txt""" % (bam_file, output_folder, base_name)
+# output = call(command, shell=True)
+# print(output)
 
 # #picard
 # print('Running CollectAlignmentSummaryMetrics')
 # # #CollectAlignmentSummaryMetrics
 # command = """
-# java -jar -Xmx15g %s/picard.jar CollectAlignmentSummaryMetrics \
+# java -jar -Xmx%sg %s/picard.jar CollectAlignmentSummaryMetrics \
 # I=%s \
 # O=%s/%s.AlignmentSummaryMetrics.txt \
 # R=%s \
-# VALIDATION_STRINGENCY=SILENT""" % (picard_dir, bam_file, output_folder, base_name, human_reference)
+# VALIDATION_STRINGENCY=SILENT""" % (memory, picard_dir, bam_file, output_folder, base_name, human_reference)
 # output = call(command, shell=True)
 # print(output)
+
 
 # print('Running CollectGcBiasMetrics')
 # # #CollectGcBiasMetrics
 # command = """
-# java -jar -Xmx15g %s/picard.jar CollectGcBiasMetrics \
+# java -jar -Xmx%sg %s/picard.jar CollectGcBiasMetrics \
 # I=%s \
 # O=%s/%s.gc_bias_metrics.txt \
 # R=%s \
 # CHART=%s/%s.gc_bias_metrics.pdf \
 # S=%s/%s.gc_bias_summary_metrics.txt \
-# VALIDATION_STRINGENCY=SILENT""" % (picard_dir, bam_file, output_folder, base_name, human_reference, output_folder, base_name, output_folder, base_name)
+# VALIDATION_STRINGENCY=SILENT""" % (memory, picard_dir, bam_file, output_folder, base_name, human_reference, output_folder, base_name, output_folder, base_name)
 # output = call(command, shell=True)
 # print(output)
 
+
+
 # print('Running CollectInsertSizeMetrics')
 # #CollectInsertSizeMetrics
-# command = """java -Xmx%s -jar %s/picard.jar CollectInsertSizeMetrics \
+# command = """java -Xmx%sg -jar %s/picard.jar CollectInsertSizeMetrics \
 # I=%s \
 # O=%s/%s.insert_size_metrics.txt \
 # H=%s/%s.insert_size_histogram.pdf \
 # M=0.5 \
-# VALIDATION_STRINGENCY=SILENT""" % (memory_use, picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
+# VALIDATION_STRINGENCY=SILENT""" % (memory, picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
 # output = call(command, shell=True)
 # print(output)
 
 # # #MeanQualityByCycle
 # print('Running MeanQualityByCycle')
-# command = """java -Xmx%s -jar %s/picard.jar MeanQualityByCycle \
+# command = """java -Xmx%sg -jar %s/picard.jar MeanQualityByCycle \
 # I=%s \
 # O=%s/%s.mean_qual_by_cycle.txt \
 # CHART=%s/%s.mean_qual_by_cycle.pdf \
-# VALIDATION_STRINGENCY=SILENT """ % (memory_use, picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
+# VALIDATION_STRINGENCY=SILENT """ % (memory, picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
 # output = call(command, shell=True)
 # print(output)
 
 # print('Running QualityScoreDistribution')
 # # #QualityScoreDistribution
-# command = """java -Xmx%s -jar %s/picard.jar QualityScoreDistribution \
+# command = """java -Xmx%sg -jar %s/picard.jar QualityScoreDistribution \
 # I=%s \
 # O=%s/%s.qual_score_dist.txt \
 # CHART=%s/%s.qual_score_dist.pdf \
-# VALIDATION_STRINGENCY=SILENT """ % (memory_use, picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
+# VALIDATION_STRINGENCY=SILENT """ % (memory, picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
 # output = call(command, shell=True)
 # print(output)
 
@@ -182,10 +210,6 @@ print(output)
 # I=%s \
 # O=%s/%s.hs_metrics.txt \
 # R=%s \
-# BAIT_INTERVALS=%s \
-# TARGET_INTERVALS=%s \
-# VALIDATION_STRINGENCY=SILENT """ % (memory_use, picard_dir, bam_file, output_folder, base_name, human_reference, target_file, target_file)
+# VALIDATION_STRINGENCY=SILENT """ % (memory_use, picard_dir, bam_file, output_folder, base_name, human_reference)
 # output = call(command, shell=True)
 # print(output)
-
-
