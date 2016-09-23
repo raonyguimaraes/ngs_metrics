@@ -81,7 +81,7 @@ if not os.path.exists(bam_file+'.bai'):
     logging.info(output)
     print(output)
 
-command = "%s/fastqc -t %s %s -o %s" % (fastqc_dir, n_cores, bam_file, output_folder)
+command = "%s/fastqc -t %s %s -o %s &" % (fastqc_dir, n_cores, bam_file, output_folder)
 print(command)
 output = call(command, shell=True)
 print(output)
