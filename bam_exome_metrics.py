@@ -43,19 +43,26 @@ qualimap_dir = "/home/ubuntu/projects/programs/qualimap/qualimap_v2.2"
 featurecounts_dir = "/home/ubuntu/projects/programs/subread-1.5.1-Linux-x86_64/bin"
 
 input_folder = '/home/ubuntu/projects/input/bam'
-output_folder = '/home/ubuntu/projects/output/bam'
 
 base=os.path.basename(bam_file)
 base_name = os.path.splitext(base)[0]
+
+# print(base, base_name)
+
+output_folder = '/home/ubuntu/projects/output/bam/%s' % (base_name)
+
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
 
 logging.basicConfig(filename='%s.run.log.txt' % (base_name),level=logging.DEBUG)
 
 print(base_name)
 print(bam_file)
+
 if bam_file.startswith('s3://'):
     #download file to input folder
     command = "s3cmd get --continue %s %s/" % (bam_file, input_folder)
-    output = call(command, shell=True)
+    output = check_output(command, shell=True)
     logging.info(output)
     print(output)
     # print(command)
@@ -65,7 +72,7 @@ print(bam_file)
 if not os.path.exists(bam_file+'.bai'):
     #Download index
     command = "s3cmd get --continue %s.bai %s/" % (original_bam, input_folder)
-    output = call(command, shell=True)
+    output = check_output(command, shell=True)
     logging.info(output)
     print(output)
 
@@ -78,10 +85,9 @@ if not os.path.exists(bam_file+'.bai'):
 
 command = "%s/fastqc -t %s %s -o %s" % (fastqc_dir, n_cores, bam_file, output_folder)
 print(command)
-output = call(command, shell=True)
+output = check_output(command, shell=True)
 print(output)
 die()
-                
 
 #samtools flagstat
 print('Running sambamba flagstat')
@@ -121,10 +127,11 @@ command = """%s/qualimap bamqc \
 --java-mem-size=%sG \
 -bam %s \
 -outdir %s \
+
 -nt %s
 """ % (qualimap_dir, memory, bam_file, output_folder, n_cores)
-# output = call(command, shell=True)
-# print(output)
+output = call(command, shell=True)
+print(output)
 
 #bamtools
 print('Running bamtools')
