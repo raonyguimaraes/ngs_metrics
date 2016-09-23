@@ -62,7 +62,7 @@ print(bam_file)
 if bam_file.startswith('s3://'):
     #download file to input folder
     command = "s3cmd get --continue %s %s/" % (bam_file, input_folder)
-    output = run(command, shell=True)
+    output = run(command, stdout=subprocess.PIPE)
     logging.info(output)
     print(output)
     # print(command)
@@ -72,7 +72,7 @@ print(bam_file)
 if not os.path.exists(bam_file+'.bai'):
     #Download index
     command = "s3cmd get --continue %s.bai %s/" % (original_bam, input_folder)
-    output = run(command, shell=True)
+    output = run(command, stdout=subprocess.PIPE)
     logging.info(output)
     print(output)
 
@@ -85,7 +85,7 @@ if not os.path.exists(bam_file+'.bai'):
 
 command = "%s/fastqc -t %s %s -o %s" % (fastqc_dir, n_cores, bam_file, output_folder)
 print(command)
-output = run(command, shell=True)
+output = run(command, stdout=subprocess.PIPE)
 print(output)
 die()
 
