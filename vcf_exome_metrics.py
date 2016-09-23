@@ -30,10 +30,12 @@ if not os.path.exists(output_folder):
 output_base = "%s/%s" % (output_folder, base_name)
 
 memory_use = "15g"
+
 gvcftools_path = "/home/ubuntu/projects/programs/gvcftools-0.16/bin"
 vcftools_path = "/home/ubuntu/projects/programs/vcftools/vcftools-0.1.14/src"
 bcftools_path = "/home/ubuntu/projects/programs/bcftools/bcftools-1.3.1"
 snpeff_path = "/home/ubuntu/projects/programs/snpeff/snpEff"
+
 #/home/ubuntu/projects/programs/vcftools/vcftools-0.1.14/src/cpp/
 #/home/ubuntu/projects/programs/vcftools/vcftools-0.1.14/src/perl/
 
