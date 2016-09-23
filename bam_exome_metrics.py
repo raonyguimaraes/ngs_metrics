@@ -87,7 +87,6 @@ command = "%s/fastqc -t %s %s -o %s" % (fastqc_dir, n_cores, bam_file, output_fo
 print(command)
 output = call(command, shell=True)
 print(output)
-die()
 
 #samtools flagstat
 print('Running sambamba flagstat')
@@ -102,8 +101,8 @@ command = """%s/featureCounts --donotsort -T %s -p \
 -a %s \
 -o %s/%s.featureCounts.txt \
 %s""" % (featurecounts_dir, n_cores, gtf_file, output_folder, base_name, bam_file)
-# output = call(command, shell=True)
-# print(output)
+output = call(command, shell=True)
+print(output)
 
 print('Running DepthOfCoverage')
 #gatk DepthOfCoverage
@@ -118,8 +117,8 @@ java -Xmx%sg -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
 --omitIntervalStatistics \
 -nt %s
 """ % (memory, gatk_dir, bam_file, human_reference, output_folder, base_name, target_file, output_folder, base_name, n_cores)
-# output = call(command, shell=True)
-# print(output)
+output = call(command, shell=True)
+print(output)
 
 #qualimap BamQC
 print('Running qualimap BamQC')
@@ -135,8 +134,8 @@ print(output)
 #bamtools
 print('Running bamtools')
 command = """/home/ubuntu/projects/programs/bamtools/bin/bamtools stats -in %s > %s/%s.bamtools.stats.txt""" % (bam_file, output_folder, base_name)
-# output = call(command, shell=True)
-# print(output)
+output = call(command, shell=True)
+print(output)
 
 #picard
 print('Running CollectAlignmentSummaryMetrics')
@@ -147,8 +146,8 @@ I=%s \
 O=%s/%s.AlignmentSummaryMetrics.txt \
 R=%s \
 VALIDATION_STRINGENCY=SILENT""" % (memory, picard_dir, bam_file, output_folder, base_name, human_reference)
-# output = call(command, shell=True)
-# print(output)
+output = call(command, shell=True)
+print(output)
 
 
 print('Running CollectGcBiasMetrics')
@@ -161,8 +160,8 @@ R=%s \
 CHART=%s/%s.gc_bias_metrics.pdf \
 S=%s/%s.gc_bias_summary_metrics.txt \
 VALIDATION_STRINGENCY=SILENT""" % (memory, picard_dir, bam_file, output_folder, base_name, human_reference, output_folder, base_name, output_folder, base_name)
-# output = call(command, shell=True)
-# print(output)
+output = call(command, shell=True)
+print(output)
 
 
 
@@ -174,8 +173,8 @@ O=%s/%s.insert_size_metrics.txt \
 H=%s/%s.insert_size_histogram.pdf \
 M=0.5 \
 VALIDATION_STRINGENCY=SILENT""" % (memory, picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
-# output = call(command, shell=True)
-# print(output)
+output = call(command, shell=True)
+print(output)
 
 # #MeanQualityByCycle
 print('Running MeanQualityByCycle')
@@ -186,8 +185,6 @@ CHART=%s/%s.mean_qual_by_cycle.pdf \
 VALIDATION_STRINGENCY=SILENT """ % (memory, picard_dir, bam_file, output_folder, base_name, output_folder, base_name)
 output = call(command, shell=True)
 print(output)
-
-die()
 
 print('Running QualityScoreDistribution')
 # #QualityScoreDistribution
