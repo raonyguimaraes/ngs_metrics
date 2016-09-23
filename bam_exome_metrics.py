@@ -88,6 +88,7 @@ print(command)
 output = run(command, stdout=subprocess.PIPE)
 print(output)
 die()
+die()
 
 #samtools flagstat
 print('Running sambamba flagstat')
