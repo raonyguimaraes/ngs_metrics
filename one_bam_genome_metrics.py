@@ -48,6 +48,8 @@ featurecounts_dir = "/home/ubuntu/projects/programs/subread-1.5.1-Linux-x86_64/b
 
 input_folder = '/home/ubuntu/projects/input/bam'
 
+base=os.path.basename(bam_file)
+base_name = os.path.splitext(base)[0]
 
 # print(base, base_name)
 
@@ -58,8 +60,6 @@ if not os.path.exists(output_folder):
 
 logging.basicConfig(filename='%s.run.log.txt' % (base_name),level=logging.DEBUG)
 
-base=os.path.basename(bam_file)
-base_name = os.path.splitext(base)[0]
 # print(base_name)
 # print(bam_file)
 
