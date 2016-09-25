@@ -67,7 +67,7 @@ logging.basicConfig(filename='bam_genome_metrics.run.log.txt',level=logging.DEBU
 
 for bam_group in bam_groups:
     for bam_file in bam_group:
-
+        original_bam = bam_file
         base=os.path.basename(bam_file)
         base_name = os.path.splitext(base)[0]
         if bam_file.startswith('s3://'):
