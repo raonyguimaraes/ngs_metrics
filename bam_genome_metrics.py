@@ -65,7 +65,7 @@ logging.basicConfig(filename='bam_genome_metrics.run.log.txt',level=logging.DEBU
 # print(base_name)
 # print(bam_file)
 
-for bam_group in bam_group:
+for bam_group in bam_groups:
     for bam_file in bam_group:
 
         base=os.path.basename(bam_file)
