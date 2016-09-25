@@ -60,7 +60,7 @@ output_folder = '/home/ubuntu/projects/output/bam/'
 # if not os.path.exists(output_folder):
 #     os.makedirs(output_folder)
 
-logging.basicConfig(filename='%s.run.log.txt' % (base_name),level=logging.DEBUG)
+logging.basicConfig(filename='bam_genome_metrics.run.log.txt',level=logging.DEBUG)
 
 # print(base_name)
 # print(bam_file)
