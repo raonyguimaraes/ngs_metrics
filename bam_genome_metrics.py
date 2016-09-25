@@ -23,15 +23,17 @@ parser.add_argument("-m", "--memory", help="RAM Memory to use in GB")
 
 args = parser.parse_args()
 
+
 bam_files = args.input
+n_cores = int(args.cores)
+memory = int(args.memory)
+
 print(bam_files)
 bam_groups = list(chunks(bam_files,n_cores))
 print(bam_groups)
 
 # original_bam = bam_file
 
-n_cores = int(args.cores)
-memory = int(args.memory)
 
 # print(bam_file)
 
