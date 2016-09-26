@@ -28,8 +28,8 @@ args = parser.parse_args()
 bam_files = args.input
 output_folder = args.output
 
-# if not os.path.exists(output_folder):
-#     os.makedirs(output_folder)
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
 
 print(bam_files)
 
