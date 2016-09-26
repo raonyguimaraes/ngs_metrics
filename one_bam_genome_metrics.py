@@ -82,9 +82,9 @@ if not os.path.exists(bam_file+'.bai'):
     print(output)
 
 command = "%s/fastqc -t %s %s -o %s &" % (fastqc_dir, n_cores, bam_file, output_folder)
-print(command)
-output = call(command, shell=True)
-print(output)
+# print(command)
+# output = call(command, shell=True)
+# print(output)
 
 # #samtools flagstat
 # print('Running samtools flagstat')
@@ -99,8 +99,8 @@ print(output)
 print('Running sambamba flagstat')
 command = """%s/sambamba_v0.6.4 flagstat -t %s -p %s > %s/%s.samtools.flagstat.txt &
 """ % (programs_dir, n_cores, bam_file, output_folder, base_name)
-output = call(command, shell=True)
-print(output)
+# output = call(command, shell=True)
+# print(output)
 
 print('Running featureCounts')
 #featureCounts
@@ -108,8 +108,8 @@ command = """%s/featureCounts --donotsort -T %s -p \
 -a %s \
 -o %s/%s.featureCounts.txt \
 %s &""" % (featurecounts_dir, n_cores, gtf_file, output_folder, base_name, bam_file)
-output = call(command, shell=True)
-print(output)
+# output = call(command, shell=True)
+# print(output)
 
 print('Running DepthOfCoverage')
 #gatk DepthOfCoverage
@@ -134,8 +134,8 @@ command = """%s/qualimap bamqc \
 -outdir %s \
 -nt %s &
 """ % (qualimap_dir, memory, bam_file, output_folder, n_cores)
-output = call(command, shell=True)
-print(output)
+# output = call(command, shell=True)
+# print(output)
 
 # os.remove(bam_file)
 
