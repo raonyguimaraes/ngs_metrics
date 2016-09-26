@@ -80,9 +80,9 @@ def download_bams_from_s3():
             if bam_file.startswith('s3://'):
                 #download file to input folder
                 command = "s3cmd get --continue %s %s/" % (bam_file, input_folder)
-                # output = check_output(command, shell=True)
-                # logging.info(output)
-                # print(output)
+                output = check_output(command, shell=True)
+                logging.info(output)
+                print(output)
                 # print(command)
                 bam_file = "%s/%s" % (input_folder, base)
 
@@ -92,18 +92,18 @@ def download_bams_from_s3():
                 #Download index
                 command = "s3cmd get --continue %s.bai %s/" % (original_bam, input_folder)
                 # print(command)
-                # output = check_output(command, shell=True)
-                # logging.info(output)
-                # print(output)
+                output = check_output(command, shell=True)
+                logging.info(output)
+                print(output)
 
 download_bams_from_s3()
 
 for bam_group in bam_groups:
     command = "%s/fastqc -t %s %s -o %s" % (fastqc_dir, n_cores, " ".join(bam_group), output_folder)
     print(command)
-    # output = check_output(command, shell=True)
-    # logging.info(output)
-    # print(output)
+    output = check_output(command, shell=True)
+    logging.info(output)
+    print(output)
 # os.remove(bam_file)
 finish_time = datetime.datetime.now()
 logging.info("Finish time: "+str(finish_time))
