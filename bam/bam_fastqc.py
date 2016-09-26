@@ -111,8 +111,9 @@ def download_bams_from_s3():
                 command = "s3cmd get --continue %s.bai %s/" % (original_bam, input_folder)
                 run_command(command)
         new_bam_groups.append(new_bam_group)
+    return(new_bam_groups)
 
-download_bams_from_s3()
+new_bam_groups = download_bams_from_s3()
 print(new_bam_groups)
 die()
 for bam_group in bam_groups:
