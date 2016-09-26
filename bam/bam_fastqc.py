@@ -2,7 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from subprocess import call, check_output#, run
+
 import subprocess
+import shlex 
+
 import os
 import time
 import datetime
@@ -14,6 +17,8 @@ def chunks(l, n):
     """Yield successive n-sized chunks from l."""
     for i in range(0, len(l), n):
         yield l[i:i + n]
+
+
 
 parser = argparse.ArgumentParser()
 
@@ -65,6 +70,19 @@ input_folder = '/home/ubuntu/projects/input/bam'
 
 
 logging.basicConfig(filename=log_file,level=logging.DEBUG)
+
+def run_command(command):
+    process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE)
+    while True:
+        output = process.stdout.readline()
+        if output == '' and process.poll() is not None:
+            break
+        if output:
+            print(output.strip())
+            logging.info(output.strip())
+    rc = process.poll()
+    return rc
+
 # your code
 start_time = datetime.datetime.now()
 logging.info("Start time: "+str(start_time))
@@ -80,10 +98,7 @@ def download_bams_from_s3():
             if bam_file.startswith('s3://'):
                 #download file to input folder
                 command = "s3cmd get --continue %s %s/" % (bam_file, input_folder)
-                output = check_output(command, shell=True)
-                logging.info(output)
-                print(output)
-                # print(command)
+                run_command(command)
                 bam_file = "%s/%s" % (input_folder, base)
 
             print(bam_file)
@@ -91,19 +106,14 @@ def download_bams_from_s3():
             if not os.path.exists(bam_file+'.bai'):
                 #Download index
                 command = "s3cmd get --continue %s.bai %s/" % (original_bam, input_folder)
-                # print(command)
-                output = check_output(command, shell=True)
-                logging.info(output)
-                print(output)
+                run_command(command)
 
 download_bams_from_s3()
 
 for bam_group in bam_groups:
     command = "%s/fastqc -t %s %s -o %s" % (fastqc_dir, n_cores, " ".join(bam_group), output_folder)
-    print(command)
-    output = check_output(command, shell=True)
-    logging.info(output)
-    print(output)
+    run_command(command)
+    
 # os.remove(bam_file)
 finish_time = datetime.datetime.now()
 logging.info("Finish time: "+str(finish_time))
