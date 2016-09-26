@@ -113,9 +113,8 @@ def download_bams_from_s3():
         new_bam_groups.append(new_bam_group)
     return(new_bam_groups)
 
-new_bam_groups = download_bams_from_s3()
-print(new_bam_groups)
-die()
+bam_groups = download_bams_from_s3()
+
 for bam_group in bam_groups:
     command = "%s/fastqc -t %s %s -o %s" % (fastqc_dir, n_cores, " ".join(bam_group), output_folder)
     run_command(command)
