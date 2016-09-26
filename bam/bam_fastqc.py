@@ -90,7 +90,9 @@ logging.info("Start time: "+str(start_time))
 # print(bam_file)
 
 def download_bams_from_s3():
+    new_bam_groups = []
     for bam_group in bam_groups:
+        new_bam_group = []
         for bam_file in bam_group: 
             original_bam = bam_file
             base=os.path.basename(bam_file)
@@ -100,6 +102,7 @@ def download_bams_from_s3():
                 command = "s3cmd get --continue %s %s/" % (bam_file, input_folder)
                 run_command(command)
                 bam_file = "%s/%s" % (input_folder, base)
+                new_bam_group.append(bam_file)
 
             print(bam_file)
 
@@ -107,9 +110,11 @@ def download_bams_from_s3():
                 #Download index
                 command = "s3cmd get --continue %s.bai %s/" % (original_bam, input_folder)
                 run_command(command)
+        new_bam_groups.append(new_bam_group)
 
 download_bams_from_s3()
-
+print(new_bam_groups)
+die()
 for bam_group in bam_groups:
     command = "%s/fastqc -t %s %s -o %s" % (fastqc_dir, n_cores, " ".join(bam_group), output_folder)
     run_command(command)
