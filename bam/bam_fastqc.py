@@ -72,7 +72,7 @@ input_folder = '/home/ubuntu/projects/input/bam'
 logging.basicConfig(filename=log_file,level=logging.DEBUG)
 
 def run_command(command):
-    process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE)
+    process = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     while True:
         output = process.stdout.readline()
         if output == '' and process.poll() is not None:
@@ -113,7 +113,7 @@ download_bams_from_s3()
 for bam_group in bam_groups:
     command = "%s/fastqc -t %s %s -o %s" % (fastqc_dir, n_cores, " ".join(bam_group), output_folder)
     run_command(command)
-    
+
 # os.remove(bam_file)
 finish_time = datetime.datetime.now()
 logging.info("Finish time: "+str(finish_time))
