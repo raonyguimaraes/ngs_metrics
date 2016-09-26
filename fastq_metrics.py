@@ -10,9 +10,12 @@ import argparse
 parser = argparse.ArgumentParser()
 
 parser.add_argument("-i", "--input", help="FASTQ file (can be the location on S3)", nargs='+')
+parser.add_argument("-n", "--cores", help="Number of Cores to use")
 
 args = parser.parse_args()
 fastq_files = args.input
+n_cores = int(args.cores)
+
 
 print(fastq_files)
 print(len(fastq_files))
@@ -22,9 +25,7 @@ print(len(fastq_files))
 
 
 input_folder = "/home/ubuntu/projects/input/fastq"
-
 #download all fastq files
-
 
 list_fastq_file = []
 
@@ -58,13 +59,13 @@ qualimap_dir = "/home/ubuntu/projects/programs/qualimap/qualimap_v2.2"
 #if bam file start with s3 download from s3
 
 #fastqc
-command = "%s/fastqc -t 4 %s -o %s" % (fastqc_dir, " ".join(list_fastq_file), output_folder)
+command = "%s/fastqc -t %s %s -o %s" % (fastqc_dir, n_cores, " ".join(list_fastq_file), output_folder)
 output = call(command, shell=True)
 print(output)
 #done already!
 
 #removefastq
-os.remove(fastq_file)
+# os.remove(fastq_file)
 
 # print('Running featureCounts')
 # #featureCounts
