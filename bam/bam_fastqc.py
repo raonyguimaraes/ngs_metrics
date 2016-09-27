@@ -91,7 +91,7 @@ if not os.path.exists(bam_file+'.bai'):
 command = "%s/fastqc %s -o %s" % (fastqc_dir, bam_file, output_folder)
 run_command(command)
 
-# os.remove(bam_file)
+os.remove(bam_file)
 finish_time = datetime.datetime.now()
 logging.info("Finish time: "+str(finish_time))
 logging.info("Time Taken: "+str(finish_time-start_time))
