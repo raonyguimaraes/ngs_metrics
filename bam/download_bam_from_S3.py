@@ -64,15 +64,16 @@ if bam_file.startswith('s3://'):
     #download file to input folder
     command = "s3cmd get --continue %s %s/" % (bam_file, input_folder)
     run_command(command)
-    bam_file = "%s/%s" % (input_folder, base)
-    
-print(bam_file)
+
 
 if not os.path.exists(bam_file+'.bai'):
     #Download index
     command = "s3cmd get --continue %s.bai %s/" % (bam_file, input_folder)
     run_command(command)
 
+bam_file = "%s/%s" % (input_folder, base)
+
+print(bam_file)
 
 os.remove(bam_file)
 finish_time = datetime.datetime.now()
