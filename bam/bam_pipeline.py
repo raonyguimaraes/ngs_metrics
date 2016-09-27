@@ -42,5 +42,5 @@ def fastqc(bam_file):
     # return x*x
 
 if __name__ == '__main__':
-    p = Pool(5)
+    p = Pool(n_cores)
     print(p.map(fastqc, bam_files))
