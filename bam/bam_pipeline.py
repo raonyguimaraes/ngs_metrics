@@ -16,7 +16,9 @@ parser.add_argument("-n", "--cores", help="Number of Cores to use")
 bam_files = args.input
 n_cores = int(args.cores)
 
-log_file = "run.%s.log.txt" % (str(datetime.datetime.now()))
+
+log_file = "/home/ubuntu/projects/output/logs/run.%s.log.txt" % (str(datetime.datetime.now()).replace(' ', '_'))
+
 
 logging.basicConfig(filename=log_file,level=logging.DEBUG)
 

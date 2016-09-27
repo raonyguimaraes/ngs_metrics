@@ -20,25 +20,13 @@ def chunks(l, n):
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("-i", "--input", help="BAM files (can be the location on S3)", nargs='+')
-parser.add_argument("-o", "--output", help="Output folder")
-parser.add_argument("-l", "--log", help="Log File")
-parser.add_argument("-n", "--cores", help="Number of Cores to use")
-parser.add_argument("-m", "--memory", help="RAM Memory to use in GB")
+parser.add_argument("-i", "--input", help="BAM files (can be the location on S3)")
 
 args = parser.parse_args()
 
 bam_file = args.input
-output_folder = args.output
-
-if not os.path.exists(output_folder):
-    os.makedirs(output_folder)
 
 print(bam_file)
-
-n_cores = int(args.cores)
-memory = int(args.memory)
-log_file = args.log
 
 # print(bam_file)
 
@@ -46,7 +34,7 @@ human_reference = "/home/ubuntu/projects/input/b37/human_g1k_v37.fasta" #84 feat
 human_reference = "/home/ubuntu/projects/input/grch37/d5/hs37d5.fa" #86 features
 gtf_file = "/home/ubuntu/projects/input/gtf/Homo_sapiens.GRCh37.75.gtf"
 
-fastqc_dir = "/home/ubuntu/projects/programs/fastqc/FastQC/"
+fastqc_dir = "/home/ubuntu/projects/programs/fastqc/FastQC"
 samtools_dir = "/home/ubuntu/projects/programs/samtools-1.3.1"
 bamtools_dir = "/home/ubuntu/projects/programs/bamtools/bin/bamtools"
 programs_dir = "/home/ubuntu/projects/programs/"
@@ -56,11 +44,15 @@ qualimap_dir = "/home/ubuntu/projects/programs/qualimap/qualimap_v2.2"
 featurecounts_dir = "/home/ubuntu/projects/programs/subread-1.5.1-Linux-x86_64/bin"
 
 input_folder = '/home/ubuntu/projects/input/bam'
+base=os.path.basename(bam_file)
+base_name = os.path.splitext(base)[0]
 
-# print(base, base_name)
+print(base, base_name)
+output_folder = '/home/ubuntu/projects/output/bam/%s' % (base_name)
+if not os.path.exists(output_folder):
+    os.makedirs(output_folder)
 
-# output_folder = '/home/ubuntu/projects/output/bam/1_run' % (base_name)
-
+log_file = "/home/ubuntu/projects/output/logs/%s.run.%s.log.txt" % (base_name, str(datetime.datetime.now()).replace(' ', '_'))
 
 logging.basicConfig(filename=log_file,level=logging.DEBUG)
 
@@ -82,9 +74,6 @@ logging.info("Start time: "+str(start_time))
 # print(base_name)
 # print(bam_file)
 
-original_bam = bam_file
-base=os.path.basename(bam_file)
-base_name = os.path.splitext(base)[0]
 
 if bam_file.startswith('s3://'):
     #download file to input folder
@@ -96,10 +85,10 @@ print(bam_file)
 
 if not os.path.exists(bam_file+'.bai'):
     #Download index
-    command = "s3cmd get --continue %s.bai %s/" % (original_bam, input_folder)
+    command = "s3cmd get --continue %s.bai %s/" % (bam_file, input_folder)
     run_command(command)
     
-command = "%s/fastqc -t %s %s -o %s" % (fastqc_dir, n_cores, bam_file, output_folder)
+command = "%s/fastqc %s -o %s" % (fastqc_dir, bam_file, output_folder)
 run_command(command)
 
 # os.remove(bam_file)
