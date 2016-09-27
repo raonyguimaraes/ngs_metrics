@@ -18,8 +18,6 @@ def chunks(l, n):
     for i in range(0, len(l), n):
         yield l[i:i + n]
 
-
-
 parser = argparse.ArgumentParser()
 
 parser.add_argument("-i", "--input", help="BAM files (can be the location on S3)", nargs='+')
@@ -30,21 +28,17 @@ parser.add_argument("-m", "--memory", help="RAM Memory to use in GB")
 
 args = parser.parse_args()
 
-bam_files = args.input
+bam_file = args.input
 output_folder = args.output
 
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
 
-print(bam_files)
+print(bam_file)
 
 n_cores = int(args.cores)
 memory = int(args.memory)
 log_file = args.log
-
-
-bam_groups = list(chunks(bam_files,n_cores))
-print(bam_groups)
 
 # print(bam_file)
 
@@ -62,7 +56,6 @@ qualimap_dir = "/home/ubuntu/projects/programs/qualimap/qualimap_v2.2"
 featurecounts_dir = "/home/ubuntu/projects/programs/subread-1.5.1-Linux-x86_64/bin"
 
 input_folder = '/home/ubuntu/projects/input/bam'
-
 
 # print(base, base_name)
 
@@ -89,35 +82,25 @@ logging.info("Start time: "+str(start_time))
 # print(base_name)
 # print(bam_file)
 
-def download_bams_from_s3():
-    new_bam_groups = []
-    for bam_group in bam_groups:
-        new_bam_group = []
-        for bam_file in bam_group: 
-            original_bam = bam_file
-            base=os.path.basename(bam_file)
-            base_name = os.path.splitext(base)[0]
-            if bam_file.startswith('s3://'):
-                #download file to input folder
-                command = "s3cmd get --continue %s %s/" % (bam_file, input_folder)
-                run_command(command)
-                bam_file = "%s/%s" % (input_folder, base)
-                new_bam_group.append(bam_file)
+original_bam = bam_file
+base=os.path.basename(bam_file)
+base_name = os.path.splitext(base)[0]
 
-            print(bam_file)
-
-            if not os.path.exists(bam_file+'.bai'):
-                #Download index
-                command = "s3cmd get --continue %s.bai %s/" % (original_bam, input_folder)
-                run_command(command)
-        new_bam_groups.append(new_bam_group)
-    return(new_bam_groups)
-
-bam_groups = download_bams_from_s3()
-
-for bam_group in bam_groups:
-    command = "%s/fastqc -t %s %s -o %s" % (fastqc_dir, n_cores, " ".join(bam_group), output_folder)
+if bam_file.startswith('s3://'):
+    #download file to input folder
+    command = "s3cmd get --continue %s %s/" % (bam_file, input_folder)
     run_command(command)
+    bam_file = "%s/%s" % (input_folder, base)
+    
+print(bam_file)
+
+if not os.path.exists(bam_file+'.bai'):
+    #Download index
+    command = "s3cmd get --continue %s.bai %s/" % (original_bam, input_folder)
+    run_command(command)
+    
+command = "%s/fastqc -t %s %s -o %s" % (fastqc_dir, n_cores, bam_file, output_folder)
+run_command(command)
 
 # os.remove(bam_file)
 finish_time = datetime.datetime.now()
