@@ -16,7 +16,7 @@ parser.add_argument("-n", "--cores", help="Number of Cores to use")
 
 args = parser.parse_args()
 
-bam_files = args.input
+bam_files = args.inputs
 n_cores = int(args.cores)
 memory = '32'
 qualimap_dir = "/home/ubuntu/projects/programs/qualimap/qualimap_v2.2"
@@ -64,4 +64,4 @@ def qualimap(bam_file):
 
 if __name__ == '__main__':
     p = Pool(1)
-    print(p.map(fastqc, bam_files))
+    print(p.map(qualimap, bam_files))
