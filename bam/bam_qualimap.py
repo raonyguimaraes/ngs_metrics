@@ -19,7 +19,7 @@ args = parser.parse_args()
 
 bam_files = args.input
 n_cores = int(args.cores)
-memory = '4'
+memory = '28'
 qualimap_dir = "/home/ubuntu/projects/programs/qualimap/qualimap_v2.2"
 # log_file = "/home/ubuntu/projects/output/logs/run.%s.log.txt" % (str(datetime.datetime.now()).replace(' ', '_'))
 # logging.basicConfig(filename=log_file,level=logging.DEBUG)
