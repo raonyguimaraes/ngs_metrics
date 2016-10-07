@@ -22,7 +22,7 @@ bam_files = args.input
 target_file = args.target
 
 n_cores = int(args.cores)
-memory = '30'
+memory = '28'
 qualimap_dir = "/home/ubuntu/projects/programs/qualimap/qualimap_v2.2"
 # log_file = "/home/ubuntu/projects/output/logs/run.%s.log.txt" % (str(datetime.datetime.now()).replace(' ', '_'))
 # logging.basicConfig(filename=log_file,level=logging.DEBUG)
@@ -52,7 +52,7 @@ def qualimap(bam_file):
     
     output_folder = '/home/ubuntu/projects/output/bam/%s' % (base_name)
     if not os.path.exists(output_folder):
-        osq.makedirs(output_folder)
+        os.makedirs(output_folder)
 
     print('Running qualimap BamQC')
     command = """%s/qualimap bamqc \
