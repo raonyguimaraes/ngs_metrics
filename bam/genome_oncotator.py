@@ -14,10 +14,22 @@ from subprocess import call
 parser = argparse.ArgumentParser()
 
 parser.add_argument("-i", "--input", help="VCF file")
+parser.add_argument("-o", "--output", help="Output folder")
+parser.add_argument("-q", "--quality", help="Quality Score Threshold")
+parser.add_argument("-d", "--depth", help="Depth of Coverage Threshold")
+
 
 args = parser.parse_args()
  
 vcf_file = args.input
+output = args.output
+quality = int(args.quality)
+depth = int(args.depth)
+
+if not os.path.exists(output):
+    os.makedirs(output)
+
+os.chdir(output)
 
 base=os.path.basename(vcf_file)
 base_name = os.path.splitext(base)[0]
@@ -48,12 +60,12 @@ print(output)
 # output = call(command, shell=True)
 # print(output)
 #filter good quality
-command = "%s/bcftools filter -i'QUAL>30 && FMT/DP>10' %s.variants.vcf > %s.filtered.exons.q30.dp10.vcf" % (bcftools_path, base_name, base_name)
+command = "%s/bcftools filter -i'QUAL>%s && FMT/DP>%s' %s.variants.vcf > %s.filtered.exons.q%s.dp%s.vcf" % (bcftools_path, quality, depth, base_name, base_name, quality, depth)
 output = call(command, shell=True)
 print(output)
 
 #clean_nonref
-vcf_reader = open("%s.filtered.exons.q30.dp10.vcf" % (base_name))
+vcf_reader = open("%s.filtered.exons.q%s.dp%s.vcf" % (base_name, quality, depth))
 vcf_writer = open("%s.oncotator.vcf" % (base_name), 'w')
 for line in vcf_reader:
     # print(line)
