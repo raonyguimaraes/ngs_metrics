@@ -23,7 +23,6 @@ print(len(fastq_files))
 #mock up
 # fastq_file = "../../../input/bam/test.recal.bam"
 
-
 input_folder = "/home/ubuntu/projects/input/fastq"
 #download all fastq files
 
