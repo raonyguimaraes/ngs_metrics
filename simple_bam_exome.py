@@ -64,17 +64,17 @@ print(bam_file)
 # output = call(command, shell=True)
 # print(output)
 
-command = "%s/fastqc -t %s %s -o %s" % (fastqc_dir, n_cores, bam_file, output_folder)
-print(command)
-output = call(command, shell=True)
-print(output)
+# command = "%s/fastqc -t %s %s -o %s" % (fastqc_dir, n_cores, bam_file, output_folder)
+# print(command)
+# output = call(command, shell=True)
+# print(output)
 
-#samtools flagstat
-print('Running sambamba flagstat')
-command = """%s/sambamba_v0.6.4 flagstat -t %s -p %s > %s/%s.samtools.flagstat.txt
-""" % (programs_dir, n_cores, bam_file, output_folder, base_name)
-output = call(command, shell=True)
-print(output)
+# #samtools flagstat
+# print('Running sambamba flagstat')
+# command = """%s/sambamba_v0.6.4 flagstat -t %s -p %s > %s/%s.samtools.flagstat.txt
+# """ % (programs_dir, n_cores, bam_file, output_folder, base_name)
+# output = call(command, shell=True)
+# print(output)
 
 # print('Running featureCounts')
 # #featureCounts
@@ -85,29 +85,30 @@ print(output)
 # output = call(command, shell=True)
 # print(output)
 
-print('Running DepthOfCoverage')
-#gatk DepthOfCoverage
-command = """
-java -Xmx%sg -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
--I %s \
--R %s \
--o %s/%s.DepthOfCoverage.txt \
--L %s \
--ct 15 -ct 50 -ct 100 -ct 150 -ct 200 \
--log %s/%s.DepthofCoverage.log \
---omitIntervalStatistics \
--nt %s
-""" % (memory, gatk_dir, bam_file, human_reference, output_folder, base_name, target_file, output_folder, base_name, n_cores)
-output = call(command, shell=True)
-print(output)
+# print('Running DepthOfCoverage')
+# #gatk DepthOfCoverage
+# command = """
+# java -Xmx%sg -jar %s/GenomeAnalysisTK.jar -T DepthOfCoverage \
+# -I %s \
+# -R %s \
+# -o %s/%s.DepthOfCoverage.txt \
+# -L %s \
+# -ct 15 -ct 50 -ct 100 -ct 150 -ct 200 \
+# -log %s/%s.DepthofCoverage.log \
+# --omitIntervalStatistics \
+# -nt %s
+# """ % (memory, gatk_dir, bam_file, human_reference, output_folder, base_name, target_file, output_folder, base_name, n_cores)
+# output = call(command, shell=True)
+# print(output)
 
 #qualimap BamQC
 print('Running qualimap BamQC')
 command = """%s/qualimap bamqc \
 --java-mem-size=%sG \
+--feature-file %s \
 -bam %s \
 -outdir %s \
 -nt %s
-""" % (qualimap_dir, memory, bam_file, output_folder, n_cores)
+""" % (qualimap_dir, memory, target_file, bam_file, output_folder, n_cores)
 output = call(command, shell=True)
 print(output)
