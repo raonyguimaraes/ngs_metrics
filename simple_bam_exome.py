@@ -105,10 +105,9 @@ print(output)
 print('Running qualimap BamQC')
 command = """%s/qualimap bamqc \
 --java-mem-size=%sG \
---feature-file %s \
 -bam %s \
 -outdir %s \
 -nt %s
-""" % (qualimap_dir, memory, target_file, bam_file, output_folder, n_cores)
+""" % (qualimap_dir, memory, bam_file, output_folder, n_cores)
 output = call(command, shell=True)
 print(output)
